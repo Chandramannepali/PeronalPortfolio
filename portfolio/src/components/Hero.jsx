@@ -1,9 +1,41 @@
+import { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { profileData } from "../data/portfolioData";
+import { usePortfolio } from "../context/PortfolioDataContext";
 import TextScramble from "./TextScramble";
 import MagneticButton from "./MagneticButton";
+import { FiVolume2, FiVolumeX } from "react-icons/fi";
 
 export default function Hero() {
+  const { profileData } = usePortfolio();
+  const [isMuted, setIsMuted] = useState(true);
+  const videoRef = useRef(null);
+
+  const toggleMute = () => {
+    if (videoRef.current) {
+      videoRef.current.muted = !videoRef.current.muted;
+      setIsMuted(videoRef.current.muted);
+    }
+  };
+
+  useEffect(() => {
+    const scrollContainer = document.querySelector(".snap-container");
+    if (!scrollContainer) return;
+
+    const handleScroll = () => {
+      const scrollTop = scrollContainer.scrollTop;
+      if (scrollTop > 200) {
+        if (videoRef.current && !videoRef.current.muted) {
+          videoRef.current.muted = true;
+          setIsMuted(true);
+        }
+      }
+    };
+
+    scrollContainer.addEventListener("scroll", handleScroll, { passive: true });
+    return () => {
+      scrollContainer.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -18,12 +50,44 @@ export default function Hero() {
   };
 
   return (
-    <section className="hero" id="hero" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div className="hero-grid-bg" />
-      <div className="hero-glow" />
-      <div className="hero-orb hero-orb-1" />
-      <div className="hero-orb hero-orb-2" />
-      <div className="aurora" />
+    <section className="hero" id="hero" style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
+      {/* Background Video */}
+      <video 
+        src="/src/assets/name_chandra_role_AI_full_s.mp4" 
+        autoPlay
+        loop
+        muted
+        playsInline
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          zIndex: 0,
+          pointerEvents: "none"
+        }}
+      />
+      {/* Dark overlay for readability */}
+      <div 
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: "linear-gradient(to bottom, rgba(10, 10, 15, 0.7) 0%, rgba(10, 10, 15, 0.85) 100%)",
+          zIndex: 1,
+          pointerEvents: "none"
+        }}
+      />
+
+      <div className="hero-grid-bg" style={{ zIndex: 1 }} />
+      <div className="hero-glow" style={{ zIndex: 1 }} />
+      <div className="hero-orb hero-orb-1" style={{ zIndex: 1 }} />
+      <div className="hero-orb hero-orb-2" style={{ zIndex: 1 }} />
+      <div className="aurora" style={{ zIndex: 1 }} />
 
       <motion.div 
         className="hero-inner"
@@ -36,7 +100,9 @@ export default function Hero() {
           gap: "4rem",
           alignItems: "center",
           width: "100%",
-          textAlign: "left"
+          textAlign: "left",
+          position: "relative",
+          zIndex: 2
         }}
       >
         {/* Left Side: Avatar Panel */}
@@ -60,15 +126,37 @@ export default function Hero() {
             animation: "morphBlob 8s ease-in-out infinite alternate",
             overflow: "hidden"
           }}>
+            <video 
+              ref={videoRef}
+              src="/src/assets/name_chandra_role_AI_full_s.mp4" 
+              autoPlay
+              loop
+              muted={isMuted}
+              playsInline
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                borderRadius: "inherit"
+              }}
+              onError={(e) => {
+                // If video fails, fallback to image
+                e.target.style.display = 'none';
+                const img = e.target.nextSibling;
+                if (img) img.style.display = 'block';
+              }}
+            />
             <img 
               src="/src/assets/poorna.png" 
               alt={profileData.fullName}
               onError={(e) => {
                 // If user hasn't added poorna.png yet, show a stunning animated SVG avatar
                 e.target.style.display = 'none';
-                e.target.nextSibling.style.display = 'flex';
+                const fallback = e.target.nextSibling;
+                if (fallback) fallback.style.display = 'flex';
               }}
               style={{
+                display: "none",
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
@@ -96,6 +184,41 @@ export default function Hero() {
               </span>
             </div>
           </div>
+
+          {/* Mute/Unmute floating trigger button */}
+          <button
+            onClick={toggleMute}
+            style={{
+              position: "absolute",
+              bottom: "10px",
+              right: "20px",
+              background: "rgba(10, 10, 15, 0.75)",
+              border: "1px solid rgba(255, 255, 255, 0.15)",
+              borderRadius: "50%",
+              width: "40px",
+              height: "40px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#fff",
+              cursor: "pointer",
+              zIndex: 10,
+              boxShadow: "0 4px 12px rgba(0,0,0,0.5)",
+              transition: "transform 0.2s, background 0.2s",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = "scale(1.1)";
+              e.currentTarget.style.background = "var(--accent)";
+              e.currentTarget.style.color = "#000";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = "scale(1)";
+              e.currentTarget.style.background = "rgba(10, 10, 15, 0.75)";
+              e.currentTarget.style.color = "#fff";
+            }}
+          >
+            {isMuted ? <FiVolumeX size={16} /> : <FiVolume2 size={16} />}
+          </button>
 
           {/* Decorative tech rings */}
           <div className="avatar-ring-outer" style={{

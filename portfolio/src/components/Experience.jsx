@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
-import { experienceData } from "../data/portfolioData";
+import { usePortfolio } from "../context/PortfolioDataContext";
 import { useInView } from "../hooks/useInView";
 import TiltCard from "./TiltCard";
 import { FaBriefcase } from "react-icons/fa";
 
 export default function Experience() {
+  const { experienceData } = usePortfolio();
   const [ref, inView] = useInView(0.1);
 
   return (

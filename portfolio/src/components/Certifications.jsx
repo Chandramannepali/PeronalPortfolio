@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { certificationsData } from "../data/portfolioData";
+import { usePortfolio } from "../context/PortfolioDataContext";
 import { useInView } from "../hooks/useInView";
 import { FaAward } from "react-icons/fa";
 
@@ -14,6 +14,7 @@ const itemVariants = {
 };
 
 export default function Certifications() {
+  const { certificationsData } = usePortfolio();
   const [ref, inView] = useInView(0.1);
 
   return (

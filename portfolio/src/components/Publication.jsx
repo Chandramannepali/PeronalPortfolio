@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
-import { publicationData } from "../data/portfolioData";
+import { usePortfolio } from "../context/PortfolioDataContext";
 import { useInView } from "../hooks/useInView";
 import TiltCard from "./TiltCard";
 import { FaGraduationCap, FaExternalLinkAlt } from "react-icons/fa";
 
 export default function Publication() {
+  const { publicationData } = usePortfolio();
   const [ref, inView] = useInView(0.1);
 
   return (

@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { FiGithub, FiLinkedin, FiMail, FiPhone, FiMapPin, FiSend } from "react-icons/fi";
-import { profileData } from "../data/portfolioData";
+import { usePortfolio } from "../context/PortfolioDataContext";
 import { useInView } from "../hooks/useInView";
 import MagneticButton from "./MagneticButton";
 
 const API_BASE = "http://localhost:8080/api";
 
 export default function Contact() {
+  const { profileData } = usePortfolio();
   const [ref, inView] = useInView(0.1);
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [status, setStatus] = useState(null); // 'success' | 'error' | null

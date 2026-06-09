@@ -1,10 +1,46 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { projectsData } from "../data/portfolioData";
+import { usePortfolio } from "../context/PortfolioDataContext";
 import { useInView } from "../hooks/useInView";
 import TiltCard from "./TiltCard";
+import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { TokenizationDemo, FarmLinkDemo } from "./ProjectDemos";
 
 export default function Projects() {
+  const { projectsData } = usePortfolio();
   const [ref, inView] = useInView(0.05);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const [openDemo, setOpenDemo] = useState({});
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const maxSlide = isMobile ? projectsData.length - 1 : projectsData.length - 2;
+
+  const nextSlide = () => {
+    if (currentSlide < maxSlide) {
+      setCurrentSlide((prev) => prev + 1);
+    } else {
+      setCurrentSlide(0); // loop back
+    }
+  };
+
+  const prevSlide = () => {
+    if (currentSlide > 0) {
+      setCurrentSlide((prev) => prev - 1);
+    } else {
+      setCurrentSlide(maxSlide);
+    }
+  };
+
+  const toggleDemo = (num) => {
+    setOpenDemo((prev) => ({ ...prev, [num]: !prev[num] }));
+  };
 
   return (
     <section id="projects">
@@ -19,47 +55,165 @@ export default function Projects() {
           animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
           transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
         >Projects</motion.h2>
-        <div className="projects-grid">
-          {projectsData.map((p, i) => (
-            <motion.div
-              key={p.number}
-              initial={{ opacity: 0, y: 60, rotateX: 10 }}
-              animate={inView ? { opacity: 1, y: 0, rotateX: 0 } : {}}
-              transition={{ duration: 0.9, delay: 0.2 + i * 0.2, ease: [0.16, 1, 0.3, 1] }}
+
+        <div className="projects-slider-container">
+          <div className="projects-slider-window">
+            <motion.div 
+              className="projects-slider-track"
+              animate={{ x: isMobile ? `calc(-${currentSlide * 100}% - ${currentSlide * 1.5}rem)` : `calc(-${currentSlide * 50}% - ${currentSlide * 0.75}rem)` }}
+              transition={{ type: "spring", stiffness: 220, damping: 26 }}
             >
-              <TiltCard className="project-card" style={{ position: "relative", overflow: "hidden", padding: "0" }}>
-                {/* Project Image Container */}
-                <div className="project-image-container" style={{ overflow: "hidden", position: "relative", height: "200px" }}>
-                  <img 
-                    src={p.image} 
-                    alt={p.title} 
-                    className="project-image"
-                    onError={(e) => {
-                      // fallback to standard gradient if file is missing
-                      e.target.style.display = 'none';
-                    }}
-                    style={{
-                      width: "100%",
-                      height: "100%",
-                      objectFit: "cover",
-                      transition: "transform 0.5s ease",
-                    }}
-                  />
-                  <div className="project-image-overlay" />
-                </div>
-                <div className="project-card-body" style={{ padding: "2rem" }}>
-                  <div className="project-number">{p.number} / Project</div>
-                  <h3 className="project-title">{p.title}</h3>
-                  <div className="project-stack">
-                    {p.stack.map((s) => <span className="stack-tag" key={s}>{s}</span>)}
+              {projectsData.map((p, i) => (
+                <div className="projects-slider-card-wrapper" key={p.number}>
+                  <div className="flip-card-container">
+                    <div className={`flip-card-inner ${openDemo[p.number] ? "flipped" : ""}`}>
+                      
+                      {/* FRONT FACE: Project Info */}
+                      <div className="flip-card-front">
+                        <TiltCard className="project-card" style={{ position: "relative", overflow: "hidden", padding: "0", height: "100%", display: "flex", flexDirection: "column", flex: 1 }}>
+                          {/* Project Image Container */}
+                          <div className="project-image-container" style={{ overflow: "hidden", position: "relative", height: "150px" }}>
+                            <img 
+                              src={p.image} 
+                              alt={p.title} 
+                              className="project-image"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                transition: "transform 0.5s ease",
+                              }}
+                            />
+                            <div className="project-image-overlay" />
+                          </div>
+                          <div className="project-card-body" style={{ padding: "1.25rem", flex: 1, display: "flex", flexDirection: "column" }}>
+                            <div className="project-number">{p.number} / Project</div>
+                            <h3 className="project-title" style={{ fontSize: "1.1rem", marginBottom: "0.4rem" }}>{p.title}</h3>
+                            <div className="project-stack">
+                              {p.stack.map((s) => <span className="stack-tag" key={s}>{s}</span>)}
+                            </div>
+                            <ul className="project-bullets" style={{ marginBottom: "1rem" }}>
+                              {p.bullets.slice(0, 2).map((b, j) => (
+                                <li key={j} style={{ fontSize: "0.78rem", lineHeight: "1.3", marginBottom: "0.25rem" }}>
+                                  {b}
+                                </li>
+                              ))}
+                            </ul>
+
+                            {/* Try Simulator Button */}
+                            <button
+                              onClick={() => toggleDemo(p.number)}
+                              className="btn btn-outline"
+                              style={{
+                                width: "100%",
+                                marginTop: "auto",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "0.5rem",
+                                borderStyle: "dashed",
+                                borderColor: "var(--accent)",
+                                color: "var(--accent)",
+                                padding: "0.6rem 1rem",
+                                fontSize: "0.7rem",
+                              }}
+                            >
+                              Try Interactive Simulator
+                            </button>
+                          </div>
+                        </TiltCard>
+                      </div>
+
+                      {/* BACK FACE: Interactive Simulator */}
+                      <div className="flip-card-back">
+                        <div className="project-card" style={{ position: "relative", overflow: "hidden", padding: "1.5rem", height: "100%", display: "flex", flexDirection: "column", flex: 1 }}>
+                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                            <div>
+                              <div className="project-number" style={{ marginBottom: "0.2rem" }}>{p.number} / Interactive Simulator</div>
+                              <h3 className="project-title" style={{ fontSize: "1.1rem", margin: 0 }}>{p.title}</h3>
+                            </div>
+                          </div>
+                          
+                          <div style={{ flex: 1, overflowY: "auto", paddingRight: "0.25rem", marginBottom: "1rem" }}>
+                            {p.number === "01" && <TokenizationDemo />}
+                            {p.number === "02" && <FarmLinkDemo />}
+                            {p.number === "03" && (
+                              <div style={{
+                                padding: "1.25rem",
+                                background: "rgba(255,255,255,0.02)",
+                                borderRadius: "8px",
+                                fontSize: "0.8rem",
+                                color: "var(--muted)",
+                                border: "1px solid var(--border)",
+                                fontFamily: "'DM Mono', monospace"
+                              }}>
+                                <div style={{ color: "var(--accent)", fontWeight: "600", marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                                  <span className="pulse-dot" /> Live IoT Soil Node #412
+                                </div>
+                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+                                  <div>Moisture: <span style={{ color: "#fff" }}>44% (Good)</span></div>
+                                  <div>Temp: <span style={{ color: "#fff" }}>28.4°C</span></div>
+                                  <div>Nitrogen: <span style={{ color: "#fff" }}>14 mg/kg</span></div>
+                                  <div>Phosphorus: <span style={{ color: "#fff" }}>18 mg/kg</span></div>
+                                </div>
+                                <div style={{ borderTop: "1px dashed var(--border)", marginTop: "0.5rem", paddingTop: "0.5rem", fontSize: "0.7rem", color: "var(--accent2)" }}>
+                                  ⚡ Alerts: Soil parameters optimal.
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          <button
+                            onClick={() => toggleDemo(p.number)}
+                            className="btn btn-outline"
+                            style={{
+                              width: "100%",
+                              marginTop: "auto",
+                              display: "flex",
+                              alignItems: "center",
+                              justifyContent: "center",
+                              gap: "0.5rem",
+                              borderStyle: "dashed",
+                              borderColor: "var(--accent2)",
+                              color: "var(--accent2)",
+                              padding: "0.6rem 1rem",
+                              fontSize: "0.7rem",
+                            }}
+                          >
+                            Hide Simulator
+                          </button>
+                        </div>
+                      </div>
+
+                    </div>
                   </div>
-                  <ul className="project-bullets">
-                    {p.bullets.map((b, j) => <li key={j}>{b}</li>)}
-                  </ul>
                 </div>
-              </TiltCard>
+              ))}
             </motion.div>
-          ))}
+          </div>
+
+          {/* Navigation Button at Right Corner */}
+          {currentSlide < maxSlide && (
+            <button 
+              className="slider-nav-btn btn-next" 
+              onClick={nextSlide}
+              title="Next Project"
+            >
+              <FiChevronRight size={24} />
+            </button>
+          )}
+          {currentSlide > 0 && (
+            <button 
+              className="slider-nav-btn btn-prev" 
+              onClick={prevSlide}
+              title="Previous Project"
+            >
+              <FiChevronLeft size={24} />
+            </button>
+          )}
         </div>
       </div>
     </section>

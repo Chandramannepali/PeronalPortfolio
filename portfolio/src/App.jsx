@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./index.css";
 import CustomCursor from "./components/CustomCursor";
 import Particles from "./components/Particles";
@@ -12,23 +13,59 @@ import Education from "./components/Education";
 import Certifications from "./components/Certifications";
 import Contact from "./components/Contact";
 import Footer from "./components/Footer";
+import AdminDashboard from "./components/AdminDashboard";
+import { PortfolioDataProvider } from "./context/PortfolioDataContext";
 
 export default function App() {
+  const [showAdmin, setShowAdmin] = useState(false);
+
   return (
-    <>
+    <PortfolioDataProvider>
       <Particles />
       <CustomCursor />
       <Navbar />
-      <Hero />
-      <Marquee />
-      <Skills />
-      <Projects />
-      <Experience />
-      <Publication />
-      <Education />
-      <Certifications />
-      <Contact />
-      <Footer />
-    </>
+      
+      <div className="snap-container">
+        <div id="hero" className="snap-section">
+          <Hero />
+        </div>
+        
+        <div className="marquee-wrap">
+          <Marquee />
+        </div>
+
+        <div id="skills" className="snap-section">
+          <Skills />
+        </div>
+
+        <div id="projects" className="snap-section">
+          <Projects />
+        </div>
+
+        <div id="experience" className="snap-section">
+          <Experience />
+        </div>
+
+        <div id="publication" className="snap-section">
+          <Publication />
+        </div>
+
+        <div id="education" className="snap-section">
+          <Education />
+        </div>
+
+        <div id="certifications" className="snap-section">
+          <Certifications />
+        </div>
+
+        <div id="contact" className="snap-section">
+          <Contact />
+        </div>
+
+        <Footer onAdminClick={() => setShowAdmin(true)} />
+      </div>
+
+      {showAdmin && <AdminDashboard onClose={() => setShowAdmin(false)} />}
+    </PortfolioDataProvider>
   );
 }

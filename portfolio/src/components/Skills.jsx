@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { skillsData } from "../data/portfolioData";
+import { usePortfolio } from "../context/PortfolioDataContext";
 import { useInView } from "../hooks/useInView";
 import TiltCard from "./TiltCard";
 
@@ -47,6 +47,7 @@ const itemV = {
 };
 
 export default function Skills() {
+  const { skillsData } = usePortfolio();
   const [ref, inView] = useInView(0.1);
 
   return (

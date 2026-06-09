@@ -1,113 +1,402 @@
 package com.portfolio.controller;
 
-import com.portfolio.model.ContactMessage;
-import com.portfolio.repository.ContactMessageRepository;
+import com.portfolio.model.*;
+import com.portfolio.repository.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
-/**
- * Serves all the portfolio data as JSON — so the frontend can optionally
- * fetch data from the API instead of static JS files.
- */
 @RestController
 @RequestMapping("/api")
+@CrossOrigin(origins = "http://localhost:5175")
 public class PortfolioController {
 
+    private static final String ADMIN_TOKEN = "admin123";
+
+    @Autowired
+    private ProfileRepository profileRepository;
+
+    @Autowired
+    private SkillRepository skillRepository;
+
+    @Autowired
+    private ProjectRepository projectRepository;
+
+    @Autowired
+    private ExperienceRepository experienceRepository;
+
+    @Autowired
+    private EducationRepository educationRepository;
+
+    @Autowired
+    private CertificationRepository certificationRepository;
+
+    @Autowired
+    private PublicationRepository publicationRepository;
+
+    @Autowired
+    private ContactMessageRepository contactMessageRepository;
+
+    private boolean verifyAdminToken(String token) {
+        return ADMIN_TOKEN.equals(token);
+    }
+
     /**
-     * GET /api/profile — Returns full profile information.
+     * GET /api/profile - Returns full portfolio information from JPA database.
      */
     @GetMapping("/profile")
     public ResponseEntity<Map<String, Object>> getProfile() {
-        Map<String, Object> profile = new LinkedHashMap<>();
-        profile.put("name", "M Poorna Chandra Rao");
-        profile.put("tagline", "Available for Opportunities · 2026 Graduate");
-        profile.put("summary", "Aspiring software engineer building scalable, real-world solutions with Python, Java, and AI/ML — from LLM tooling to full-stack marketplaces.");
-        profile.put("email", "chandramannepalli239@gmail.com");
-        profile.put("phone", "+91 97036 52569");
-        profile.put("location", "Nellore, Andhra Pradesh");
-        profile.put("languages", "Telugu · English · Tamil");
-        profile.put("github", "https://github.com");
-        profile.put("linkedin", "https://linkedin.com");
+        Profile profileEntity = profileRepository.findById(1L).orElse(null);
+        if (profileEntity == null) {
+            return ResponseEntity.notFound().build();
+        }
 
-        // Skills
-        List<Map<String, Object>> skills = List.of(
-            Map.of("category", "Programming", "items", List.of("Python", "Java")),
-            Map.of("category", "Web", "items", List.of("HTML", "CSS", "JavaScript", "React")),
-            Map.of("category", "AI / ML", "items", List.of("SpeechRecognition", "PyAudio", "Pyttsx3", "Tokenization Analysis")),
-            Map.of("category", "Database", "items", List.of("SQL", "Supabase")),
-            Map.of("category", "Tools", "items", List.of("Git", "GitHub", "VS Code", "Streamlit")),
-            Map.of("category", "LLMs", "items", List.of("GPT-2", "LLaMA", "T5", "Hugging Face"))
-        );
-        profile.put("skills", skills);
+        Map<String, Object> profile = new LinkedHashMap<>();
+        profile.put("fullName", profileEntity.getFullName());
+        profile.put("name", profileEntity.getName());
+        profile.put("nameLine2", profileEntity.getNameLine2());
+        profile.put("tagline", profileEntity.getTagline());
+        profile.put("summary", profileEntity.getSummary());
+        profile.put("email", profileEntity.getEmail());
+        profile.put("phone", profileEntity.getPhone());
+        profile.put("location", profileEntity.getLocation());
+        profile.put("languages", profileEntity.getLanguages());
+        profile.put("github", profileEntity.getGithub());
+        profile.put("linkedin", profileEntity.getLinkedin());
+
+        // Skills: group by category
+        List<Skill> skills = skillRepository.findAll();
+        Map<String, List<String>> skillsByCategory = new LinkedHashMap<>();
+        for (Skill skill : skills) {
+            skillsByCategory.computeIfAbsent(skill.getCategory(), k -> new ArrayList<>()).add(skill.getName());
+        }
+        List<Map<String, Object>> skillsList = new ArrayList<>();
+        for (Map.Entry<String, List<String>> entry : skillsByCategory.entrySet()) {
+            Map<String, Object> group = new LinkedHashMap<>();
+            group.put("category", entry.getKey());
+            group.put("items", entry.getValue());
+            skillsList.add(group);
+        }
+        profile.put("skills", skillsList);
 
         // Projects
-        List<Map<String, Object>> projects = List.of(
-            Map.of(
-                "number", "01",
-                "title", "LLM Tokenization Visual Explorer",
-                "stack", List.of("Python", "Streamlit", "Hugging Face"),
-                "bullets", List.of(
-                    "Built an interactive tool to visualize and compare tokenization behavior across LLMs including GPT-2, LLaMA, and T5.",
-                    "Analyzed token splits, token IDs, and total token counts to demonstrate cost impact caused by prompt variations.",
-                    "Implemented tokenizer comparison and prompt mutation analysis to support cost-aware prompt optimization."
-                )
-            ),
-            Map.of(
-                "number", "02",
-                "title", "FarmLink — Farm-to-Consumer Marketplace",
-                "stack", List.of("React", "Supabase", "CSS"),
-                "bullets", List.of(
-                    "Built a full-stack marketplace with role-based portals for Farmers, Consumers, and Admins.",
-                    "Integrated AI Quality Scan grading crop images across freshness, color uniformity, size consistency.",
-                    "Developed AI Price Intelligence engine providing market-driven crop price predictions.",
-                    "Designed command-handling logic to accurately map spoken input to media actions."
-                )
-            )
-        );
-        profile.put("projects", projects);
+        List<Project> projects = projectRepository.findAll();
+        List<Map<String, Object>> projectsList = new ArrayList<>();
+        for (Project p : projects) {
+            Map<String, Object> proj = new LinkedHashMap<>();
+            proj.put("id", p.getId());
+            proj.put("number", p.getNumber());
+            proj.put("title", p.getTitle());
+            proj.put("image", p.getImage());
+            if (p.getStack() != null) {
+                proj.put("stack", Arrays.asList(p.getStack().split(",")));
+            } else {
+                proj.put("stack", new ArrayList<>());
+            }
+            if (p.getBullets() != null) {
+                proj.put("bullets", Arrays.asList(p.getBullets().split(";;")));
+            } else {
+                proj.put("bullets", new ArrayList<>());
+            }
+            projectsList.add(proj);
+        }
+        profile.put("projects", projectsList);
 
         // Experience
-        List<Map<String, Object>> experience = List.of(
-            Map.of(
-                "role", "Web Development Intern",
-                "company", "CodSoft — Remote",
-                "period", "Jun 2024 – Aug 2024",
-                "bullets", List.of(
-                    "Developed responsive web pages including a portfolio, landing page, and calculator using HTML, CSS, and JavaScript.",
-                    "Collaborated with team members to incorporate feedback and improve UI usability.",
-                    "Utilized Git and GitHub to manage version control and streamline team workflows."
-                )
-            )
-        );
-        profile.put("experience", experience);
+        List<Experience> experience = experienceRepository.findAll();
+        List<Map<String, Object>> experienceList = new ArrayList<>();
+        for (Experience e : experience) {
+            Map<String, Object> exp = new LinkedHashMap<>();
+            exp.put("id", e.getId());
+            exp.put("role", e.getRole());
+            exp.put("company", e.getCompany());
+            exp.put("period", e.getPeriod());
+            if (e.getBullets() != null) {
+                exp.put("bullets", Arrays.asList(e.getBullets().split(";;")));
+            } else {
+                exp.put("bullets", new ArrayList<>());
+            }
+            experienceList.add(exp);
+        }
+        profile.put("experience", experienceList);
 
         // Education
-        List<Map<String, Object>> education = List.of(
-            Map.of("degree", "B.Tech — AI & Data Science", "institution", "J.N.N Institute of Engineering", "period", "2022 – 2026", "cgpa", "7.39"),
-            Map.of("degree", "Intermediate (Class XII)", "institution", "MJPAP BCWR Junior College", "period", "2020 – 2022", "cgpa", "8.34"),
-            Map.of("degree", "SSC (Class X)", "institution", "MJPAP BCWR School", "period", "2019 – 2020", "cgpa", "9.0")
-        );
-        profile.put("education", education);
+        List<Education> education = educationRepository.findAll();
+        List<Map<String, Object>> educationList = new ArrayList<>();
+        for (Education ed : education) {
+            Map<String, Object> edu = new LinkedHashMap<>();
+            edu.put("id", ed.getId());
+            edu.put("degree", ed.getDegree());
+            edu.put("institution", ed.getInstitution());
+            edu.put("period", ed.getPeriod());
+            edu.put("cgpa", ed.getCgpa());
+            educationList.add(edu);
+        }
+        profile.put("education", educationList);
 
         // Certifications
-        List<Map<String, String>> certs = List.of(
-            Map.of("name", "Project Management Fundamentals", "issuer", "IBM"),
-            Map.of("name", "Introduction to Internet of Things", "issuer", "NPTEL"),
-            Map.of("name", "Introduction to Generative AI", "issuer", "Google Cloud")
-        );
-        profile.put("certifications", certs);
+        List<Certification> certifications = certificationRepository.findAll();
+        List<Map<String, String>> certificationsList = new ArrayList<>();
+        for (Certification c : certifications) {
+            Map<String, String> cert = new LinkedHashMap<>();
+            cert.put("id", String.valueOf(c.getId()));
+            cert.put("name", c.getName());
+            cert.put("issuer", c.getIssuer());
+            certificationsList.add(cert);
+        }
+        profile.put("certifications", certificationsList);
 
         // Publication
-        profile.put("publication", Map.of(
-            "type", "Peer-Reviewed Journal Article",
-            "title", "Enhancing Agricultural Productivity Through the Integration of AI and IoT",
-            "meta", "IJARESM · Volume 12 · August 2024",
-            "role", "Led the project from idea generation to final publication."
-        ));
+        Publication pub = publicationRepository.findById(1L).orElse(null);
+        if (pub != null) {
+            Map<String, String> pubMap = new LinkedHashMap<>();
+            pubMap.put("type", pub.getType());
+            pubMap.put("title", pub.getTitle());
+            pubMap.put("meta", pub.getMeta());
+            pubMap.put("role", pub.getRole());
+            profile.put("publication", pubMap);
+        }
 
         return ResponseEntity.ok(profile);
+    }
+
+
+
+    /**
+     * GET /api/admin/messages - Retrieve messages (Admin only)
+     */
+    @GetMapping("/admin/messages")
+    public ResponseEntity<List<ContactMessage>> getMessages(@RequestHeader(value = "Authorization", required = false) String token) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(contactMessageRepository.findAll());
+    }
+
+    /**
+     * PUT /api/admin/profile - Update main profile attributes.
+     */
+    @PutMapping("/admin/profile")
+    public ResponseEntity<Profile> updateProfile(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestBody Profile updatedProfile) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Profile existing = profileRepository.findById(1L).orElse(new Profile());
+        existing.setId(1L);
+        existing.setFullName(updatedProfile.getFullName());
+        existing.setName(updatedProfile.getName());
+        existing.setNameLine2(updatedProfile.getNameLine2());
+        existing.setTagline(updatedProfile.getTagline());
+        existing.setSummary(updatedProfile.getSummary());
+        existing.setEmail(updatedProfile.getEmail());
+        existing.setPhone(updatedProfile.getPhone());
+        existing.setLocation(updatedProfile.getLocation());
+        existing.setLanguages(updatedProfile.getLanguages());
+        existing.setGithub(updatedProfile.getGithub());
+        existing.setLinkedin(updatedProfile.getLinkedin());
+
+        profileRepository.save(existing);
+        return ResponseEntity.ok(existing);
+    }
+
+    /**
+     * PUT /api/admin/publication - Update publication fields.
+     */
+    @PutMapping("/admin/publication")
+    public ResponseEntity<Publication> updatePublication(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestBody Publication updatedPub) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        Publication existing = publicationRepository.findById(1L).orElse(new Publication());
+        existing.setId(1L);
+        existing.setType(updatedPub.getType());
+        existing.setTitle(updatedPub.getTitle());
+        existing.setMeta(updatedPub.getMeta());
+        existing.setRole(updatedPub.getRole());
+
+        publicationRepository.save(existing);
+        return ResponseEntity.ok(existing);
+    }
+
+    // --- SKILLS ADMIN ---
+
+    @PostMapping("/admin/skills")
+    public ResponseEntity<Skill> addSkill(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestBody Skill skill) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(skillRepository.save(skill));
+    }
+
+    @DeleteMapping("/admin/skills/{id}")
+    public ResponseEntity<Void> deleteSkill(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @PathVariable Long id) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        skillRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    // --- PROJECTS ADMIN ---
+
+    @PostMapping("/admin/projects")
+    public ResponseEntity<Project> addProject(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestBody Project project) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(projectRepository.save(project));
+    }
+
+    @PutMapping("/admin/projects/{id}")
+    public ResponseEntity<Project> updateProject(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @PathVariable Long id,
+            @RequestBody Project project) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Project existing = projectRepository.findById(id).orElse(null);
+        if (existing == null) {
+            return ResponseEntity.notFound().build();
+        }
+        existing.setNumber(project.getNumber());
+        existing.setTitle(project.getTitle());
+        existing.setImage(project.getImage());
+        existing.setStack(project.getStack());
+        existing.setBullets(project.getBullets());
+        return ResponseEntity.ok(projectRepository.save(existing));
+    }
+
+    @DeleteMapping("/admin/projects/{id}")
+    public ResponseEntity<Void> deleteProject(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @PathVariable Long id) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        projectRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    // --- EXPERIENCE ADMIN ---
+
+    @PostMapping("/admin/experience")
+    public ResponseEntity<Experience> addExperience(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestBody Experience exp) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(experienceRepository.save(exp));
+    }
+
+    @PutMapping("/admin/experience/{id}")
+    public ResponseEntity<Experience> updateExperience(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @PathVariable Long id,
+            @RequestBody Experience exp) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Experience existing = experienceRepository.findById(id).orElse(null);
+        if (existing == null) {
+            return ResponseEntity.notFound().build();
+        }
+        existing.setRole(exp.getRole());
+        existing.setCompany(exp.getCompany());
+        existing.setPeriod(exp.getPeriod());
+        existing.setBullets(exp.getBullets());
+        return ResponseEntity.ok(experienceRepository.save(existing));
+    }
+
+    @DeleteMapping("/admin/experience/{id}")
+    public ResponseEntity<Void> deleteExperience(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @PathVariable Long id) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        experienceRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    // --- EDUCATION ADMIN ---
+
+    @PostMapping("/admin/education")
+    public ResponseEntity<Education> addEducation(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestBody Education edu) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(educationRepository.save(edu));
+    }
+
+    @PutMapping("/admin/education/{id}")
+    public ResponseEntity<Education> updateEducation(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @PathVariable Long id,
+            @RequestBody Education edu) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        Education existing = educationRepository.findById(id).orElse(null);
+        if (existing == null) {
+            return ResponseEntity.notFound().build();
+        }
+        existing.setDegree(edu.getDegree());
+        existing.setInstitution(edu.getInstitution());
+        existing.setPeriod(edu.getPeriod());
+        existing.setCgpa(edu.getCgpa());
+        return ResponseEntity.ok(educationRepository.save(existing));
+    }
+
+    @DeleteMapping("/admin/education/{id}")
+    public ResponseEntity<Void> deleteEducation(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @PathVariable Long id) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        educationRepository.deleteById(id);
+        return ResponseEntity.ok().build();
+    }
+
+    // --- CERTIFICATIONS ADMIN ---
+
+    @PostMapping("/admin/certifications")
+    public ResponseEntity<Certification> addCertification(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @RequestBody Certification cert) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        return ResponseEntity.ok(certificationRepository.save(cert));
+    }
+
+    @DeleteMapping("/admin/certifications/{id}")
+    public ResponseEntity<Void> deleteCertification(
+            @RequestHeader(value = "Authorization", required = false) String token,
+            @PathVariable Long id) {
+        if (!verifyAdminToken(token)) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        certificationRepository.deleteById(id);
+        return ResponseEntity.ok().build();
     }
 }

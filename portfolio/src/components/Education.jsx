@@ -1,10 +1,11 @@
 import { motion } from "framer-motion";
-import { educationData } from "../data/portfolioData";
+import { usePortfolio } from "../context/PortfolioDataContext";
 import { useInView } from "../hooks/useInView";
 import TiltCard from "./TiltCard";
 import { FaGraduationCap, FaUniversity } from "react-icons/fa";
 
 export default function Education() {
+  const { educationData } = usePortfolio();
   const [ref, inView] = useInView(0.1);
 
   return (
