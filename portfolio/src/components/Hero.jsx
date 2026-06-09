@@ -53,7 +53,7 @@ export default function Hero() {
     <section className="hero" id="hero" style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
       {/* Background Video */}
       <video 
-        src="/src/assets/name_chandra_role_AI_full_s.mp4" 
+        src="/assets/name_chandra_role_AI_full_s.mp4" 
         autoPlay
         loop
         muted
@@ -128,7 +128,7 @@ export default function Hero() {
           }}>
             <video 
               ref={videoRef}
-              src="/src/assets/name_chandra_role_AI_full_s.mp4" 
+              src="/assets/name_chandra_role_AI_full_s.mp4" 
               autoPlay
               loop
               muted={isMuted}
@@ -147,7 +147,7 @@ export default function Hero() {
               }}
             />
             <img 
-              src="/src/assets/poorna.png" 
+              src="/assets/poorna.png" 
               alt={profileData.fullName}
               onError={(e) => {
                 // If user hasn't added poorna.png yet, show a stunning animated SVG avatar

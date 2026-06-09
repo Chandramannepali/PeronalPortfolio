@@ -32,7 +32,7 @@ export const projectsData = [
   {
     number: "01",
     title: "LLM Tokenization Visual Explorer",
-    image: "/src/assets/tokenization.png", // We will place your image here
+    image: "/assets/tokenization.png", // We will place your image here
     stack: ["Python", "Streamlit", "Hugging Face"],
     bullets: [
       "Built an interactive tool to visualize and compare tokenization behavior across LLMs including GPT-2, LLaMA, and T5.",
@@ -43,7 +43,7 @@ export const projectsData = [
   {
     number: "02",
     title: "FarmLink — Farm-to-Consumer Marketplace",
-    image: "/src/assets/farmlink.png", // We will place your image here
+    image: "/assets/farmlink.png", // We will place your image here
     stack: ["React", "Supabase", "CSS"],
     bullets: [
       "Built a full-stack marketplace with role-based portals for Farmers, Consumers, and Admins, eliminating middlemen and ensuring fair pricing.",

@@ -79,7 +79,7 @@ public class DataInitializer implements CommandLineRunner {
             projectRepo.save(new Project(
                 "01",
                 "LLM Tokenization Visual Explorer",
-                "/src/assets/tokenization.png",
+                "/assets/tokenization.png",
                 "Python, Streamlit, Hugging Face",
                 "Built an interactive tool to visualize and compare tokenization behavior across LLMs including GPT-2, LLaMA, and T5.;;" +
                 "Analyzed token splits, token IDs, and total token counts to demonstrate cost impact caused by prompt variations.;;" +
@@ -88,7 +88,7 @@ public class DataInitializer implements CommandLineRunner {
             projectRepo.save(new Project(
                 "02",
                 "FarmLink — Farm-to-Consumer Marketplace",
-                "/src/assets/farmlink.png",
+                "/assets/farmlink.png",
                 "React, Supabase, CSS",
                 "Built a full-stack marketplace with role-based portals for Farmers, Consumers, and Admins.;;" +
                 "Integrated AI Quality Scan grading crop images across freshness, color uniformity, size consistency.;;" +
