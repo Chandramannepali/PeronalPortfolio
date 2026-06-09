@@ -12,7 +12,6 @@ export default function Hero() {
   const bgVideoRef = useRef(null);
   const [videoPlayFailed, setVideoPlayFailed] = useState(false);
   const [bgVideoPlayFailed, setBgVideoPlayFailed] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
 
   const toggleMute = () => {
     if (videoRef.current) {
@@ -22,26 +21,36 @@ export default function Hero() {
   };
 
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 768);
+    const startVideo = () => {
+      if (videoRef.current) {
+        videoRef.current.play().catch((err) => {
+          console.log("Avatar video play pending user interaction:", err);
+        });
+      }
+      if (bgVideoRef.current) {
+        bgVideoRef.current.play().catch((err) => {
+          console.log("Background video play pending user interaction:", err);
+        });
+      }
     };
-    checkMobile();
-    window.addEventListener("resize", checkMobile);
 
-    if (videoRef.current) {
-      videoRef.current.play().catch((err) => {
-        console.warn("Avatar video autoplay blocked, using fallback image:", err);
-        setVideoPlayFailed(true);
-      });
-    }
-    if (bgVideoRef.current) {
-      bgVideoRef.current.play().catch((err) => {
-        console.warn("Background video autoplay blocked:", err);
-        setBgVideoPlayFailed(true);
-      });
-    }
+    // Try playing immediately
+    startVideo();
 
-    return () => window.removeEventListener("resize", checkMobile);
+    // Fallback: unlock playback on first user touch/click (standard for mobile browser autoplay policies)
+    const handleInteraction = () => {
+      startVideo();
+      document.removeEventListener("touchstart", handleInteraction);
+      document.removeEventListener("click", handleInteraction);
+    };
+
+    document.addEventListener("touchstart", handleInteraction, { passive: true });
+    document.addEventListener("click", handleInteraction, { passive: true });
+
+    return () => {
+      document.removeEventListener("touchstart", handleInteraction);
+      document.removeEventListener("click", handleInteraction);
+    };
   }, []);
 
   useEffect(() => {
@@ -95,7 +104,7 @@ export default function Hero() {
           objectFit: "cover",
           zIndex: 0,
           pointerEvents: "none",
-          display: (isMobile || bgVideoPlayFailed) ? "none" : "block"
+          display: bgVideoPlayFailed ? "none" : "block"
         }}
         onError={() => setBgVideoPlayFailed(true)}
       />
@@ -168,7 +177,7 @@ export default function Hero() {
                 height: "100%",
                 objectFit: "cover",
                 borderRadius: "inherit",
-                display: (isMobile || videoPlayFailed) ? "none" : "block"
+                display: videoPlayFailed ? "none" : "block"
               }}
               onError={() => setVideoPlayFailed(true)}
             />
@@ -186,7 +195,7 @@ export default function Hero() {
                 height: "100%",
                 objectFit: "cover",
                 borderRadius: "inherit",
-                display: (isMobile || videoPlayFailed) ? "block" : "none"
+                display: videoPlayFailed ? "block" : "none"
               }}
             />
             {/* Fallback Graphic */}
@@ -223,7 +232,7 @@ export default function Hero() {
               borderRadius: "50%",
               width: "40px",
               height: "40px",
-              display: (isMobile || videoPlayFailed) ? "none" : "flex",
+              display: videoPlayFailed ? "none" : "flex",
               alignItems: "center",
               justifyContent: "center",
               color: "#fff",
