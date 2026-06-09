@@ -12,6 +12,7 @@ export default function Hero() {
   const bgVideoRef = useRef(null);
   const [videoPlayFailed, setVideoPlayFailed] = useState(false);
   const [bgVideoPlayFailed, setBgVideoPlayFailed] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
 
   const toggleMute = () => {
     if (videoRef.current) {
@@ -21,6 +22,12 @@ export default function Hero() {
   };
 
   useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
     if (videoRef.current) {
       videoRef.current.play().catch((err) => {
         console.warn("Avatar video autoplay blocked, using fallback image:", err);
@@ -33,6 +40,8 @@ export default function Hero() {
         setBgVideoPlayFailed(true);
       });
     }
+
+    return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
   useEffect(() => {
@@ -86,7 +95,7 @@ export default function Hero() {
           objectFit: "cover",
           zIndex: 0,
           pointerEvents: "none",
-          display: bgVideoPlayFailed ? "none" : "block"
+          display: (isMobile || bgVideoPlayFailed) ? "none" : "block"
         }}
         onError={() => setBgVideoPlayFailed(true)}
       />
@@ -159,7 +168,7 @@ export default function Hero() {
                 height: "100%",
                 objectFit: "cover",
                 borderRadius: "inherit",
-                display: videoPlayFailed ? "none" : "block"
+                display: (isMobile || videoPlayFailed) ? "none" : "block"
               }}
               onError={() => setVideoPlayFailed(true)}
             />
@@ -177,7 +186,7 @@ export default function Hero() {
                 height: "100%",
                 objectFit: "cover",
                 borderRadius: "inherit",
-                display: videoPlayFailed ? "block" : "none"
+                display: (isMobile || videoPlayFailed) ? "block" : "none"
               }}
             />
             {/* Fallback Graphic */}
@@ -214,7 +223,7 @@ export default function Hero() {
               borderRadius: "50%",
               width: "40px",
               height: "40px",
-              display: videoPlayFailed ? "none" : "flex",
+              display: (isMobile || videoPlayFailed) ? "none" : "flex",
               alignItems: "center",
               justifyContent: "center",
               color: "#fff",
