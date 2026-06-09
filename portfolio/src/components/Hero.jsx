@@ -95,6 +95,8 @@ export default function Hero() {
         loop
         muted
         playsInline
+        webkit-playsinline="true"
+        preload="auto"
         style={{
           position: "absolute",
           top: 0,
@@ -104,7 +106,9 @@ export default function Hero() {
           objectFit: "cover",
           zIndex: 0,
           pointerEvents: "none",
-          display: bgVideoPlayFailed ? "none" : "block"
+          display: bgVideoPlayFailed ? "none" : "block",
+          transform: "translate3d(0, 0, 0)",
+          willChange: "transform"
         }}
         onError={() => setBgVideoPlayFailed(true)}
       />
@@ -172,12 +176,16 @@ export default function Hero() {
               loop
               muted={isMuted}
               playsInline
+              webkit-playsinline="true"
+              preload="auto"
               style={{
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
                 borderRadius: "inherit",
-                display: videoPlayFailed ? "none" : "block"
+                display: videoPlayFailed ? "none" : "block",
+                transform: "translate3d(0, 0, 0)",
+                willChange: "transform"
               }}
               onError={() => setVideoPlayFailed(true)}
             />
