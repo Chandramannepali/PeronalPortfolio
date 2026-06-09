@@ -9,6 +9,9 @@ export default function Hero() {
   const { profileData } = usePortfolio();
   const [isMuted, setIsMuted] = useState(true);
   const videoRef = useRef(null);
+  const bgVideoRef = useRef(null);
+  const [videoPlayFailed, setVideoPlayFailed] = useState(false);
+  const [bgVideoPlayFailed, setBgVideoPlayFailed] = useState(false);
 
   const toggleMute = () => {
     if (videoRef.current) {
@@ -16,6 +19,21 @@ export default function Hero() {
       setIsMuted(videoRef.current.muted);
     }
   };
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch((err) => {
+        console.warn("Avatar video autoplay blocked, using fallback image:", err);
+        setVideoPlayFailed(true);
+      });
+    }
+    if (bgVideoRef.current) {
+      bgVideoRef.current.play().catch((err) => {
+        console.warn("Background video autoplay blocked:", err);
+        setBgVideoPlayFailed(true);
+      });
+    }
+  }, []);
 
   useEffect(() => {
     const scrollContainer = document.querySelector(".snap-container");
@@ -53,6 +71,7 @@ export default function Hero() {
     <section className="hero" id="hero" style={{ display: "flex", alignItems: "center", justifyContent: "center", position: "relative" }}>
       {/* Background Video */}
       <video 
+        ref={bgVideoRef}
         src="/assets/name_chandra_role_AI_full_s.mp4" 
         autoPlay
         loop
@@ -66,8 +85,10 @@ export default function Hero() {
           height: "100%",
           objectFit: "cover",
           zIndex: 0,
-          pointerEvents: "none"
+          pointerEvents: "none",
+          display: bgVideoPlayFailed ? "none" : "block"
         }}
+        onError={() => setBgVideoPlayFailed(true)}
       />
       {/* Dark overlay for readability */}
       <div 
@@ -137,14 +158,10 @@ export default function Hero() {
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                borderRadius: "inherit"
+                borderRadius: "inherit",
+                display: videoPlayFailed ? "none" : "block"
               }}
-              onError={(e) => {
-                // If video fails, fallback to image
-                e.target.style.display = 'none';
-                const img = e.target.nextSibling;
-                if (img) img.style.display = 'block';
-              }}
+              onError={() => setVideoPlayFailed(true)}
             />
             <img 
               src="/assets/poorna.png" 
@@ -156,11 +173,11 @@ export default function Hero() {
                 if (fallback) fallback.style.display = 'flex';
               }}
               style={{
-                display: "none",
                 width: "100%",
                 height: "100%",
                 objectFit: "cover",
-                borderRadius: "inherit"
+                borderRadius: "inherit",
+                display: videoPlayFailed ? "block" : "none"
               }}
             />
             {/* Fallback Graphic */}
@@ -197,7 +214,7 @@ export default function Hero() {
               borderRadius: "50%",
               width: "40px",
               height: "40px",
-              display: "flex",
+              display: videoPlayFailed ? "none" : "flex",
               alignItems: "center",
               justifyContent: "center",
               color: "#fff",
