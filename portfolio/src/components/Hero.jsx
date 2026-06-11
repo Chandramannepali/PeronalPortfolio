@@ -125,7 +125,7 @@ export default function Hero() {
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          objectPosition: "70% 10%", // Adjusted from center to 10% to prevent head cut-off
+          objectPosition: "70% top", // Aligns video to top to prevent head cut-off
           zIndex: 0,
           pointerEvents: "none",
           display: bgVideoPlayFailed ? "none" : "block",
