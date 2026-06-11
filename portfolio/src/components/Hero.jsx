@@ -125,7 +125,7 @@ export default function Hero() {
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          objectPosition: "70% center",
+          objectPosition: "70% 10%", // Adjusted from center to 10% to prevent head cut-off
           zIndex: 0,
           pointerEvents: "none",
           display: bgVideoPlayFailed ? "none" : "block",
@@ -151,17 +151,8 @@ export default function Hero() {
         }}
       />
 
-      {/* Top Part: Opportunities tag */}
-      <motion.div 
-        className="hero-tag" 
-        variants={itemVariants} 
-        initial="hidden"
-        animate="visible"
-        style={{ alignSelf: "center", marginBottom: 0, zIndex: 5 }}
-      >
-        <span className="pulse-dot" />
-        {profileData.tagline}
-      </motion.div>
+      {/* Spacer to replace old top tag location in vertical distribution */}
+      <div style={{ height: "2rem", zIndex: 5 }} />
 
       {/* Left-aligned overlay content container */}
       <div style={{
@@ -190,6 +181,16 @@ export default function Hero() {
             width: "100%"
           }}
         >
+          {/* Opportunities tag left-aligned inside text side */}
+          <motion.div 
+            className="hero-tag" 
+            variants={itemVariants} 
+            style={{ alignSelf: "flex-start", marginBottom: "0.5rem" }}
+          >
+            <span className="pulse-dot" />
+            {profileData.tagline}
+          </motion.div>
+
           <motion.h1 
             className="hero-name" 
             variants={itemVariants}
