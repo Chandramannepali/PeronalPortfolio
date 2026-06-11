@@ -142,7 +142,7 @@ export default function PageTransition() {
 
               <h2 
                 style={{
-                  fontFamily: "'Syne', sans-serif",
+                  fontFamily: "'Fraunces', serif",
                   fontWeight: 800,
                   fontSize: "clamp(1.4rem, 4vw, 2.2rem)",
                   color: "var(--text)",

@@ -46,8 +46,8 @@ public class DataInitializer implements CommandLineRunner {
                 "+91 97036 52569",
                 "Nellore, Andhra Pradesh",
                 "Telugu · English · Tamil",
-                "https://github.com",
-                "https://linkedin.com"
+                "https://github.com/Chandramannepali",
+                "https://www.linkedin.com/in/poorna-chandra-rao-mannepalli-44b101259"
             );
             profile.setName("Poorna");
             profile.setNameLine2("Chandra Rao");
@@ -95,6 +95,24 @@ public class DataInitializer implements CommandLineRunner {
                 "Developed AI Price Intelligence engine providing market-driven crop price predictions.;;" +
                 "Designed command-handling logic to accurately map spoken input to media actions."
             ));
+            projectRepo.save(new Project(
+                "03",
+                "Amma's Pickles (E-Commerce)",
+                "/assets/ammas_pickles.png",
+                "MERN Stack, Razorpay, Cloudinary, JWT Auth",
+                "Built a production-ready e-commerce application with a comprehensive admin dashboard, product catalog management, and stock control.;;" +
+                "Integrated secure payment processing via Razorpay gateway and automatic image resizing and upload via Cloudinary API.;;" +
+                "Implemented JWT-based authentication and resolved real-world MongoDB Atlas DNS/routing issues in production."
+            ));
+            projectRepo.save(new Project(
+                "04",
+                "Abhay Dental Care Website",
+                "/assets/abhay_dental.png",
+                "HTML, CSS, JavaScript",
+                "Designed and developed a fully responsive patient-facing website for a dental clinic, improving new client conversion rates.;;" +
+                "Implemented an interactive appointment contact form and custom service catalog pages.;;" +
+                "Optimized load times and SEO performance, ensuring high ranking in local Google Search results."
+            ));
 
             // 4. Seed Experience
             experienceRepo.save(new Experience(
@@ -121,7 +139,8 @@ public class DataInitializer implements CommandLineRunner {
                 "Peer-Reviewed Journal Article",
                 "Enhancing Agricultural Productivity Through the Integration of AI and IoT",
                 "IJARESM · Volume 12 · August 2024",
-                "Led the project from idea generation to final publication."
+                "Led the project from idea generation to final publication.",
+                "https://www.ijaresm.com/uploaded_files/document_file/Prof._Rajakumar_._B,_ermA.pdf"
             ));
 
             System.out.println(">>> Database successfully seeded with default portfolio data!");

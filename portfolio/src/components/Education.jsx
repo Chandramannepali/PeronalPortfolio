@@ -30,7 +30,23 @@ export default function Education() {
               transition={{ duration: 0.9, delay: 0.2 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
             >
               <TiltCard className="edu-card" style={{ position: "relative", overflow: "hidden", padding: "2.5rem", height: "100%", display: "flex", flexDirection: "column", gap: "1rem" }}>
-                <div style={{ display: "flex", gap: "1.25rem", alignItems: "flex-start" }}>
+                {/* Background Image with subtle overlay */}
+                <div 
+                  className="edu-card-bg"
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    backgroundImage: `url(${i === 0 ? '/assets/jnn.jpg' : '/assets/mjp.jpg'})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    opacity: 0.08,
+                    transition: "opacity 0.4s ease, transform 0.4s ease",
+                    zIndex: 0,
+                    pointerEvents: "none"
+                  }}
+                />
+                
+                <div style={{ display: "flex", gap: "1.25rem", alignItems: "flex-start", position: "relative", zIndex: 1 }}>
                   <div style={{
                     color: "var(--accent2)",
                     background: "rgba(74,240,196,0.08)",
@@ -50,7 +66,7 @@ export default function Education() {
                   </div>
                 </div>
 
-                <div style={{ marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "center", pt: "1rem" }}>
+                <div style={{ marginTop: "auto", display: "flex", justifyContent: "space-between", alignItems: "center", pt: "1rem", position: "relative", zIndex: 1 }}>
                   <div className="edu-period" style={{ fontSize: "0.75rem", color: "var(--muted)", margin: 0 }}>{ed.period}</div>
                   <motion.span className="edu-cgpa"
                     whileHover={{ scale: 1.08, boxShadow: "0 0 20px rgba(200,241,53,0.3)" }}

@@ -1,29 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Fraunces:ital,opsz,wght@0,9..144,300;1,9..144,300&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,100..900;1,9..144,100..900&family=Outfit:wght@100..900&family=Inter:wght@100..900&family=DM+Mono:ital,wght@0,300;0,400;1,300&display=swap');
 
 :root {
-  --bg: #0a0a0f;
-  --surface: #12121a;
-  --border: #1e1e2e;
-  --accent: #c8f135;
-  --accent2: #4af0c4;
-  --text: #e8e8f0;
-  --muted: #6b6b88;
-  --card: #15151f;
-  --glass: rgba(21, 21, 31, 0.6);
-  --gradient-accent: linear-gradient(135deg, #c8f135, #4af0c4);
+  --bg: #0c0c0e;
+  --surface: #121215;
+  --border: #222228;
+  --accent: #e5c158;
+  --accent2: #a78bfa;
+  --text: #f3f3f5;
+  --muted: #8e8e9f;
+  --card: #16161a;
+  --glass: rgba(22, 22, 26, 0.7);
+  --gradient-accent: linear-gradient(135deg, #e5c158, #a78bfa);
 }
 
 body.light-theme {
-  --bg: #f4f4f9;
-  --surface: #e9e9f0;
-  --border: #d5d5e2;
-  --accent: #789c00;
-  --accent2: #008f6b;
-  --text: #0e0e15;
-  --muted: #5e5e78;
+  --bg: #fcfbf9;
+  --surface: #f5f3ef;
+  --border: #e6e2db;
+  --accent: #a88117;
+  --accent2: #6d44e8;
+  --text: #1c1a17;
+  --muted: #78736a;
   --card: #ffffff;
   --glass: rgba(255, 255, 255, 0.85);
-  --gradient-accent: linear-gradient(135deg, #789c00, #008f6b);
+  --gradient-accent: linear-gradient(135deg, #a88117, #6d44e8);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -37,9 +37,9 @@ html, body {
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'DM Mono', monospace;
-  font-weight: 300;
-  cursor: none;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 400;
+  cursor: default;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -121,12 +121,12 @@ body::before {
 }
 .navbar.hidden { transform: translateY(-100%); }
 .nav-logo {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Fraunces', serif;
   font-weight: 800;
-  font-size: 1.2rem;
+  font-size: 1.35rem;
   color: var(--accent);
   letter-spacing: -0.02em;
-  cursor: none;
+  cursor: pointer;
   text-decoration: none;
 }
 .nav-links {
@@ -140,7 +140,7 @@ body::before {
   letter-spacing: 0.15em;
   text-transform: uppercase;
   transition: color 0.2s;
-  cursor: none;
+  cursor: pointer;
   position: relative;
 }
 .nav-links a::after {
@@ -163,7 +163,7 @@ body::before {
   background: none; border: none;
   color: var(--text);
   font-size: 1.5rem;
-  cursor: none;
+  cursor: pointer;
 }
 
 /* Hero */
@@ -226,7 +226,7 @@ body::before {
   background: rgba(200,241,53,0.05);
 }
 .hero-name {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Fraunces', serif;
   font-weight: 800;
   font-size: clamp(3rem, 8vw, 7rem);
   line-height: 0.95;
@@ -252,7 +252,7 @@ body::before {
   display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
 }
 .btn {
-  font-family: 'DM Mono', monospace;
+  font-family: 'Outfit', sans-serif;
   font-size: 0.75rem;
   letter-spacing: 0.1em;
   text-transform: uppercase;
@@ -260,7 +260,7 @@ body::before {
   padding: 0.85rem 2rem;
   border-radius: 4px;
   transition: all 0.3s ease;
-  cursor: none;
+  cursor: pointer;
   display: inline-block;
   border: none;
 }
@@ -337,9 +337,9 @@ section { padding: 6rem 4rem; }
   margin-bottom: 1rem;
 }
 .section-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Fraunces', serif;
   font-weight: 700;
-  font-size: clamp(1.8rem, 4vw, 3rem);
+  font-size: clamp(1.8rem, 4vw, 3.2rem);
   letter-spacing: -0.03em;
   margin-bottom: 3rem;
   line-height: 1.1;
@@ -415,10 +415,10 @@ section { padding: 6rem 4rem; }
   margin-bottom: 1.5rem;
 }
 .project-title {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Fraunces', serif;
   font-weight: 700;
-  font-size: 1.25rem;
-  letter-spacing: -0.02em;
+  font-size: 1.35rem;
+  letter-spacing: -0.01em;
   margin-bottom: 0.5rem;
   color: var(--text);
 }
@@ -460,9 +460,9 @@ section { padding: 6rem 4rem; }
 }
 .exp-card:hover { border-color: rgba(200,241,53,0.2); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
 .exp-role {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Fraunces', serif;
   font-weight: 700;
-  font-size: 1.2rem;
+  font-size: 1.25rem;
   letter-spacing: -0.02em;
   margin-bottom: 0.25rem;
 }
@@ -502,7 +502,8 @@ section { padding: 6rem 4rem; }
   transition: all 0.3s ease;
 }
 .edu-card:hover { border-color: rgba(200,241,53,0.2); transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-.edu-degree { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
+.edu-card:hover .edu-card-bg { opacity: 0.35 !important; transform: scale(1.05); }
+.edu-degree { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.1rem; letter-spacing: -0.01em; margin-bottom: 0.5rem; }
 .edu-inst { font-size: 0.78rem; color: var(--accent2); margin-bottom: 0.25rem; }
 .edu-period { font-size: 0.7rem; color: var(--muted); margin-bottom: 1rem; }
 .edu-cgpa {
@@ -534,7 +535,7 @@ section { padding: 6rem 4rem; }
 /* Contact */
 .contact-section { text-align: center; background: var(--surface); border-top: 1px solid var(--border); }
 .contact-email {
-  font-family: 'Syne', sans-serif;
+  font-family: 'Fraunces', serif;
   font-weight: 700;
   font-size: clamp(1.2rem, 3vw, 2rem);
   color: var(--text);
@@ -543,7 +544,7 @@ section { padding: 6rem 4rem; }
   display: inline-block;
   position: relative;
   transition: color 0.2s;
-  cursor: none;
+  cursor: pointer;
 }
 .contact-email::after {
   content: '';
@@ -585,12 +586,12 @@ section { padding: 6rem 4rem; }
   border-radius: 6px;
   padding: 0.8rem 1rem;
   color: var(--text);
-  font-family: 'DM Mono', monospace;
+  font-family: 'Outfit', sans-serif;
   font-size: 0.85rem;
   transition: border-color 0.3s;
   outline: none;
   resize: vertical;
-  cursor: none;
+  cursor: text;
 }
 .form-group input:focus, .form-group textarea:focus { border-color: var(--accent); }
 .form-submit {
@@ -809,7 +810,7 @@ section { padding: 6rem 4rem; }
   .navbar { padding: 1.2rem 1.5rem; }
   .nav-links { display: none; }
   .mobile-menu-btn { display: block; }
-  section { padding: 4rem 1.5rem; }
+  section { padding: 6.5rem 1.5rem 4.5rem; }
   .hero { padding: 6rem 1.5rem 3rem; }
   .site-footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
   .exp-card { grid-template-columns: 1fr; }

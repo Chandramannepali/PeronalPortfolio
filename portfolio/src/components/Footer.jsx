@@ -14,7 +14,7 @@ export default function Footer({ onAdminClick }) {
             background: "none",
             border: "none",
             color: "var(--muted)",
-            cursor: "none",
+            cursor: "pointer",
             display: "inline-flex",
             padding: 0,
             verticalAlign: "middle",

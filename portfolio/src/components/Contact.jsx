@@ -59,7 +59,7 @@ export default function Contact() {
             transition={{ duration: 0.8, delay: 0.2 }}
             style={{ display: "flex", flexDirection: "column", gap: "2rem" }}
           >
-            <h3 style={{ fontFamily: "Syne, sans-serif", fontSize: "1.5rem", fontWeight: "700" }}>Contact Info</h3>
+            <h3 style={{ fontFamily: "Fraunces, serif", fontSize: "1.5rem", fontWeight: "700" }}>Contact Info</h3>
             
             <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
               <a href={`mailto:${profileData.email}`} style={{ display: "flex", alignItems: "center", gap: "1rem", color: "var(--text)", textDecoration: "none" }} className="contact-item-link">

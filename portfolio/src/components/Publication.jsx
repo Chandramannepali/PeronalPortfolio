@@ -61,7 +61,9 @@ export default function Publication() {
               {/* Action Link */}
               <div style={{ marginTop: "1rem" }}>
                 <motion.a 
-                  href="#"
+                  href={publicationData.link || "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="read-paper-btn" 
                   whileHover={{ scale: 1.05 }}
                   style={{

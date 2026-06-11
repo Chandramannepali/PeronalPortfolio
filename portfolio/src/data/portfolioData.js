@@ -9,8 +9,8 @@ export const profileData = {
   phone: "+91 97036 52569",
   location: "Nellore, Andhra Pradesh",
   languages: "Telugu · English · Tamil",
-  github: "https://github.com",
-  linkedin: "https://linkedin.com",
+  github: "https://github.com/Chandramannepali",
+  linkedin: "https://www.linkedin.com/in/poorna-chandra-rao-mannepalli-44b101259",
 };
 
 export const marqueeItems = [
@@ -32,7 +32,7 @@ export const projectsData = [
   {
     number: "01",
     title: "LLM Tokenization Visual Explorer",
-    image: "/assets/tokenization.png", // We will place your image here
+    image: "/assets/tokenization.png",
     stack: ["Python", "Streamlit", "Hugging Face"],
     bullets: [
       "Built an interactive tool to visualize and compare tokenization behavior across LLMs including GPT-2, LLaMA, and T5.",
@@ -43,13 +43,35 @@ export const projectsData = [
   {
     number: "02",
     title: "FarmLink — Farm-to-Consumer Marketplace",
-    image: "/assets/farmlink.png", // We will place your image here
+    image: "/assets/farmlink.png",
     stack: ["React", "Supabase", "CSS"],
     bullets: [
       "Built a full-stack marketplace with role-based portals for Farmers, Consumers, and Admins, eliminating middlemen and ensuring fair pricing.",
       "Integrated AI Quality Scan grading crop images across freshness, color uniformity, size consistency, and surface quality using computer vision.",
       "Developed AI Price Intelligence engine providing market-driven crop price predictions with trend analysis and confidence scores.",
       "Designed command-handling logic to accurately map spoken input to media actions, improving reliability and user experience.",
+    ],
+  },
+  {
+    number: "03",
+    title: "Amma's Pickles (E-Commerce)",
+    image: "/assets/ammas_pickles.png",
+    stack: ["MERN Stack", "Razorpay", "Cloudinary", "JWT Auth"],
+    bullets: [
+      "Built a production-ready e-commerce application with a comprehensive admin dashboard, product catalog management, and stock control.",
+      "Integrated secure payment processing via Razorpay gateway and automatic image resizing and upload via Cloudinary API.",
+      "Implemented JWT-based authentication and resolved real-world MongoDB Atlas DNS/routing issues in production.",
+    ],
+  },
+  {
+    number: "04",
+    title: "Abhay Dental Care Website",
+    image: "/assets/abhay_dental.png",
+    stack: ["HTML", "CSS", "JavaScript"],
+    bullets: [
+      "Designed and developed a fully responsive patient-facing website for a dental clinic, improving new client conversion rates.",
+      "Implemented an interactive appointment contact form and custom service catalog pages.",
+      "Optimized load times and SEO performance, ensuring high ranking in local Google Search results.",
     ],
   },
 ];
@@ -72,6 +94,7 @@ export const publicationData = {
   title: '"Enhancing Agricultural Productivity Through the Integration of AI and IoT"',
   meta: "International Journal of All Research Education and Scientific Methods (IJARESM) · Volume 12 · August 2024",
   role: "Led the project from idea generation to final publication, coordinating research activities, ensuring quality, and managing timelines.",
+  link: "https://www.ijaresm.com/uploaded_files/document_file/Prof._Rajakumar_._B,_ermA.pdf",
 };
 
 export const educationData = [

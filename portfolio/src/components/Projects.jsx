@@ -4,7 +4,7 @@ import { usePortfolio } from "../context/PortfolioDataContext";
 import { useInView } from "../hooks/useInView";
 import TiltCard from "./TiltCard";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-import { TokenizationDemo, FarmLinkDemo } from "./ProjectDemos";
+import { TokenizationDemo, FarmLinkDemo, AmmasPicklesDemo, AbhayDentalDemo } from "./ProjectDemos";
 
 export default function Projects() {
   const { projectsData } = usePortfolio();
@@ -60,7 +60,7 @@ export default function Projects() {
           <div className="projects-slider-window">
             <motion.div 
               className="projects-slider-track"
-              animate={{ x: isMobile ? `calc(-${currentSlide * 100}% - ${currentSlide * 1.5}rem)` : `calc(-${currentSlide * 50}% - ${currentSlide * 0.75}rem)` }}
+              animate={{ x: isMobile ? `calc(-${currentSlide} * (100vw - 1.5rem))` : `calc(-${currentSlide} * (50vw - 3rem))` }}
               transition={{ type: "spring", stiffness: 220, damping: 26 }}
             >
               {projectsData.map((p, i) => (
@@ -140,30 +140,8 @@ export default function Projects() {
                           <div style={{ flex: 1, overflowY: "auto", paddingRight: "0.25rem", marginBottom: "1rem" }}>
                             {p.number === "01" && <TokenizationDemo />}
                             {p.number === "02" && <FarmLinkDemo />}
-                            {p.number === "03" && (
-                              <div style={{
-                                padding: "1.25rem",
-                                background: "rgba(255,255,255,0.02)",
-                                borderRadius: "8px",
-                                fontSize: "0.8rem",
-                                color: "var(--muted)",
-                                border: "1px solid var(--border)",
-                                fontFamily: "'DM Mono', monospace"
-                              }}>
-                                <div style={{ color: "var(--accent)", fontWeight: "600", marginBottom: "0.5rem", display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                                  <span className="pulse-dot" /> Live IoT Soil Node #412
-                                </div>
-                                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-                                  <div>Moisture: <span style={{ color: "#fff" }}>44% (Good)</span></div>
-                                  <div>Temp: <span style={{ color: "#fff" }}>28.4°C</span></div>
-                                  <div>Nitrogen: <span style={{ color: "#fff" }}>14 mg/kg</span></div>
-                                  <div>Phosphorus: <span style={{ color: "#fff" }}>18 mg/kg</span></div>
-                                </div>
-                                <div style={{ borderTop: "1px dashed var(--border)", marginTop: "0.5rem", paddingTop: "0.5rem", fontSize: "0.7rem", color: "var(--accent2)" }}>
-                                  ⚡ Alerts: Soil parameters optimal.
-                                </div>
-                              </div>
-                            )}
+                            {p.number === "03" && <AmmasPicklesDemo />}
+                            {p.number === "04" && <AbhayDentalDemo />}
                           </div>
 
                           <button

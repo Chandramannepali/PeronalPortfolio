@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiPlay, FiRefreshCw, FiCheckCircle, FiMic, FiTrendingUp } from "react-icons/fi";
+import { FiPlay, FiRefreshCw, FiCheckCircle, FiMic, FiTrendingUp, FiShoppingCart, FiCreditCard, FiLock, FiCalendar, FiClock, FiActivity } from "react-icons/fi";
 
 // ==========================================
 // 1. LLM TOKENIZATION SIMULATOR
@@ -81,7 +81,7 @@ export function TokenizationDemo() {
               style={{
                 background: model === m ? "var(--accent)" : "rgba(255,255,255,0.03)",
                 color: model === m ? "#0a0a0f" : "var(--muted)",
-                border: "none", padding: "0.25rem 0.6rem", borderRadius: "4px", fontSize: "0.65rem", cursor: "none", transition: "all 0.2s"
+                border: "none", padding: "0.25rem 0.6rem", borderRadius: "4px", fontSize: "0.65rem", cursor: "pointer", transition: "all 0.2s"
               }}
             >
               {m}
@@ -96,7 +96,7 @@ export function TokenizationDemo() {
         onChange={(e) => setText(e.target.value)}
         style={{
           width: "100%", background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", borderRadius: "4px",
-          color: "var(--text)", padding: "0.6rem", fontSize: "0.75rem", fontFamily: "inherit", outline: "none", resize: "none", cursor: "none"
+          color: "var(--text)", padding: "0.6rem", fontSize: "0.75rem", fontFamily: "inherit", outline: "none", resize: "none", cursor: "pointer"
         }}
         placeholder="Type something to split into tokens..."
       />
@@ -203,7 +203,7 @@ export function FarmLinkDemo() {
               style={{
                 background: crop === cr ? "var(--accent2)" : "rgba(255,255,255,0.03)",
                 color: crop === cr ? "#0a0a0f" : "var(--muted)",
-                border: "none", padding: "0.25rem 0.6rem", borderRadius: "4px", fontSize: "0.65rem", cursor: "none"
+                border: "none", padding: "0.25rem 0.6rem", borderRadius: "4px", fontSize: "0.65rem", cursor: "pointer"
               }}
             >
               {cr}
@@ -223,7 +223,7 @@ export function FarmLinkDemo() {
               background: quality === q ? "rgba(200,241,53,0.12)" : "transparent",
               border: `1px solid ${quality === q ? "var(--accent)" : "rgba(255,255,255,0.05)"}`,
               color: quality === q ? "var(--accent)" : "var(--muted)",
-              padding: "0.2rem 0.5rem", borderRadius: "4px", fontSize: "0.65rem", cursor: "none"
+              padding: "0.2rem 0.5rem", borderRadius: "4px", fontSize: "0.65rem", cursor: "pointer"
             }}
           >
             {q}
@@ -239,13 +239,13 @@ export function FarmLinkDemo() {
         </div>
         <button 
           onClick={() => handleVoiceCommand(`Scan Fresh ${crop}`)}
-          style={{ fontSize: "0.55rem", border: "1px solid rgba(250,250,250,0.1)", background: "rgba(255,255,255,0.02)", color: "var(--text)", padding: "0.15rem 0.3rem", borderRadius: "3px", cursor: "none" }}
+          style={{ fontSize: "0.55rem", border: "1px solid rgba(250,250,250,0.1)", background: "rgba(255,255,255,0.02)", color: "var(--text)", padding: "0.15rem 0.3rem", borderRadius: "3px", cursor: "pointer" }}
         >
           "Scan Fresh"
         </button>
         <button 
           onClick={() => handleVoiceCommand(`Set condition Damaged`)}
-          style={{ fontSize: "0.55rem", border: "1px solid rgba(250,250,250,0.1)", background: "rgba(255,255,255,0.02)", color: "var(--text)", padding: "0.15rem 0.3rem", borderRadius: "3px", cursor: "none" }}
+          style={{ fontSize: "0.55rem", border: "1px solid rgba(250,250,250,0.1)", background: "rgba(255,255,255,0.02)", color: "var(--text)", padding: "0.15rem 0.3rem", borderRadius: "3px", cursor: "pointer" }}
         >
           "Set Damaged"
         </button>
@@ -257,7 +257,7 @@ export function FarmLinkDemo() {
         disabled={scanning}
         style={{
           width: "100%", background: "var(--accent)", border: "none", padding: "0.5rem", borderRadius: "4px",
-          color: "#0a0a0f", fontWeight: "600", fontSize: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", cursor: "none"
+          color: "#0a0a0f", fontWeight: "600", fontSize: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.5rem", cursor: "pointer"
         }}
       >
         {scanning ? <FiRefreshCw className="spin" /> : <FiPlay />}
@@ -319,3 +319,333 @@ export function FarmLinkDemo() {
     </div>
   );
 }
+
+
+// ==========================================
+// 3. AMMA'S PICKLES E-COMMERCE SIMULATOR
+// ==========================================
+export function AmmasPicklesDemo() {
+  const [cart, setCart] = useState([
+    { id: 1, name: "Avakaya Mango Pickle", price: 199, quantity: 1 },
+    { id: 2, name: "Spicy Lime Pickle", price: 149, quantity: 0 },
+  ]);
+  const [isCheckout, setIsCheckout] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState("idle"); // "idle", "processing", "success"
+  const [jwtToken, setJwtToken] = useState("");
+  const [authChecking, setAuthChecking] = useState(false);
+
+  const updateQuantity = (id, delta) => {
+    setCart(prev => prev.map(item => {
+      if (item.id === id) {
+        const newQty = Math.max(0, item.quantity + delta);
+        return { ...item, quantity: newQty };
+      }
+      return item;
+    }));
+  };
+
+  const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const deliveryFee = subtotal > 0 ? 40 : 0;
+  const grandTotal = subtotal + deliveryFee;
+
+  const startCheckout = () => {
+    if (grandTotal === 0) return;
+    setIsCheckout(true);
+    setPaymentStatus("processing");
+    setTimeout(() => {
+      setPaymentStatus("success");
+    }, 2500);
+  };
+
+  const simulateJWTAuth = () => {
+    setAuthChecking(true);
+    setTimeout(() => {
+      setJwtToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2MGM3MmRlYSIsIm5hbWUiOiJQb29ybmEiLCJyb2xlIjoiYnV5ZXIifQ");
+      setAuthChecking(false);
+    }, 1200);
+  };
+
+  return (
+    <div style={{ background: "rgba(10,10,15,0.6)", borderRadius: "8px", padding: "1.25rem", border: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1rem", textAlign: "left" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--accent)" }}>MERN Checkout & JWT Simulator</span>
+        <span style={{ fontSize: "0.6rem", color: "var(--muted)", background: "rgba(255,255,255,0.03)", padding: "0.15rem 0.4rem", borderRadius: "4px" }}>v1.0.3 (Live)</span>
+      </div>
+
+      {!isCheckout ? (
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          {/* Cart Items */}
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+            {cart.map(item => (
+              <div key={item.id} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", background: "rgba(255,255,255,0.02)", padding: "0.5rem 0.75rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.01)" }}>
+                <div>
+                  <div style={{ fontSize: "0.75rem", fontWeight: "600", color: "#fff" }}>{item.name}</div>
+                  <div style={{ fontSize: "0.65rem", color: "var(--muted)" }}>₹{item.price} / jar</div>
+                </div>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.6rem" }}>
+                  <button 
+                    type="button"
+                    onClick={() => updateQuantity(item.id, -1)}
+                    style={{ width: "20px", height: "20px", border: "1px solid var(--border)", background: "rgba(255,255,255,0.02)", color: "#fff", borderRadius: "4px", fontSize: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+                  >-</button>
+                  <span style={{ fontSize: "0.75rem", width: "12px", textAlign: "center" }}>{item.quantity}</span>
+                  <button 
+                    type="button"
+                    onClick={() => updateQuantity(item.id, 1)}
+                    style={{ width: "20px", height: "20px", border: "1px solid var(--border)", background: "rgba(255,255,255,0.02)", color: "#fff", borderRadius: "4px", fontSize: "0.75rem", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+                  >+</button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Checkout Summary */}
+          <div style={{ background: "rgba(0,0,0,0.15)", padding: "0.75rem", borderRadius: "6px", border: "1px solid rgba(255,255,255,0.01)", fontSize: "0.7rem", color: "var(--muted)", display: "flex", flexDirection: "column", gap: "0.3rem" }}>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span>Items Total:</span>
+              <span style={{ color: "#fff" }}>₹{subtotal}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <span>Delivery Fee:</span>
+              <span style={{ color: "#fff" }}>₹{deliveryFee}</span>
+            </div>
+            <div style={{ display: "flex", justifyContent: "space-between", borderTop: "1px dashed var(--border)", paddingTop: "0.4rem", marginTop: "0.2rem", fontSize: "0.75rem", fontWeight: "700" }}>
+              <span style={{ color: "var(--text)" }}>Grand Total:</span>
+              <span style={{ color: "var(--accent)" }}>₹{grandTotal}</span>
+            </div>
+          </div>
+
+          {/* Secure Payment Trigger */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
+            <button
+              type="button"
+              onClick={simulateJWTAuth}
+              disabled={authChecking}
+              style={{
+                background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: jwtToken ? "var(--accent2)" : "#fff",
+                padding: "0.5rem", borderRadius: "4px", fontSize: "0.7rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", cursor: "pointer"
+              }}
+            >
+              <FiLock size={12} />
+              {authChecking ? "Authenticating..." : jwtToken ? "Authenticated (JWT)" : "Sign In (JWT)"}
+            </button>
+            <button
+              type="button"
+              onClick={startCheckout}
+              disabled={grandTotal === 0}
+              style={{
+                background: grandTotal > 0 ? "var(--accent)" : "rgba(255,255,255,0.02)",
+                color: grandTotal > 0 ? "#0a0a0f" : "var(--muted)", border: "none",
+                padding: "0.5rem", borderRadius: "4px", fontSize: "0.7rem", fontWeight: "700", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.3rem", cursor: "pointer"
+              }}
+            >
+              <FiShoppingCart size={12} />
+              Pay via Razorpay
+            </button>
+          </div>
+
+          {/* JWT Display */}
+          {jwtToken && (
+            <div style={{ background: "rgba(0,0,0,0.3)", padding: "0.5rem 0.75rem", borderRadius: "4px", border: "1px solid rgba(74,240,196,0.15)" }}>
+              <div style={{ fontSize: "0.55rem", color: "var(--accent2)", textTransform: "uppercase", marginBottom: "0.2rem", fontWeight: "700" }}>Decoded JWT Session Payload:</div>
+              <div style={{ fontSize: "0.6rem", color: "var(--muted)", fontFamily: "monospace" }}>
+                {"{"} userId: "60c72dea", name: "Poorna", role: "buyer" {"}"}
+              </div>
+            </div>
+          )}
+        </div>
+      ) : (
+        /* Checkout Simulator Screen */
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          style={{ background: "rgba(18, 18, 30, 0.9)", border: "1px solid var(--border)", borderRadius: "6px", padding: "1.25rem", display: "flex", flexDirection: "column", gap: "0.75rem", alignItems: "center", textAlign: "center" }}
+        >
+          {paymentStatus === "processing" ? (
+            <>
+              <div style={{ position: "relative", width: "40px", height: "40px", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent)" }}>
+                <FiRefreshCw size={28} className="spin" />
+              </div>
+              <div style={{ fontSize: "0.8rem", fontWeight: "600", color: "#fff" }}>Contacting Razorpay Gateway...</div>
+              <p style={{ fontSize: "0.65rem", color: "var(--muted)", margin: 0 }}>Simulating token exchange and secure routing.</p>
+            </>
+          ) : (
+            <>
+              <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "rgba(74,240,196,0.1)", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--accent2)" }}>
+                <FiCheckCircle size={24} />
+              </div>
+              <div style={{ fontSize: "0.85rem", fontWeight: "700", color: "var(--accent2)" }}>Payment Successful!</div>
+              <div style={{ fontSize: "0.65rem", color: "var(--muted)", fontFamily: "monospace", background: "rgba(0,0,0,0.2)", padding: "0.4rem 0.8rem", borderRadius: "4px" }}>
+                Order Ref: TXN_PAY_RZP902410
+              </div>
+              <p style={{ fontSize: "0.65rem", color: "var(--muted)", margin: 0 }}>JWT Token verified. Database stock counts updated in MongoDB Atlas.</p>
+              <button 
+                type="button"
+                onClick={() => { setIsCheckout(false); setPaymentStatus("idle"); }}
+                style={{ background: "none", border: "1px solid var(--border)", color: "#fff", padding: "0.3rem 0.8rem", fontSize: "0.65rem", borderRadius: "4px", cursor: "pointer", marginTop: "0.5rem" }}
+              >
+                Buy Again
+              </button>
+            </>
+          )}
+        </motion.div>
+      )}
+    </div>
+  );
+}
+
+
+// ==========================================
+// 4. ABHAY DENTAL CARE APPOINTMENT SIMULATOR
+// ==========================================
+export function AbhayDentalDemo() {
+  const [service, setService] = useState("Teeth Whitening");
+  const [day, setDay] = useState("Tomorrow");
+  const [time, setTime] = useState("11:30 AM");
+  const [patientName, setPatientName] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const servicesList = [
+    "Teeth Whitening", "Root Canal Therapy", "General Cleaning", "Dental Braces"
+  ];
+
+  const timeSlots = [
+    "10:00 AM", "11:30 AM", "2:30 PM", "4:00 PM"
+  ];
+
+  const handleBook = (e) => {
+    e.preventDefault();
+    if (!patientName.trim()) return;
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setSubmitted(true);
+    }, 1200);
+  };
+
+  return (
+    <div style={{ background: "rgba(10,10,15,0.6)", borderRadius: "8px", padding: "1.25rem", border: "1px solid var(--border)", display: "flex", flexDirection: "column", gap: "1rem", marginTop: "1rem", textAlign: "left" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <span style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--accent2)" }}>Appointment Booking Demo</span>
+        <span style={{ fontSize: "0.65rem", color: "var(--muted)" }}>Interactive UI Component</span>
+      </div>
+
+      {!submitted ? (
+        <form onSubmit={handleBook} style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+          
+          {/* Service Selector */}
+          <div>
+            <label style={{ fontSize: "0.6rem", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: "0.25rem" }}>Select Treatment</label>
+            <select 
+              value={service}
+              onChange={(e) => setService(e.target.value)}
+              style={{ width: "100%", padding: "0.4rem", background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "#fff", borderRadius: "4px", fontSize: "0.7rem", fontFamily: "inherit", outline: "none", cursor: "pointer" }}
+            >
+              {servicesList.map(s => <option key={s} value={s} style={{ background: "#0a0a0f" }}>{s}</option>)}
+            </select>
+          </div>
+
+          {/* Date Picker */}
+          <div>
+            <label style={{ fontSize: "0.6rem", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: "0.25rem" }}>Appointment Day</label>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.4rem" }}>
+              {["Today", "Tomorrow", "Next Monday"].map(d => (
+                <button
+                  type="button"
+                  key={d}
+                  onClick={() => setDay(d)}
+                  style={{
+                    background: day === d ? "rgba(74,240,196,0.12)" : "rgba(255,255,255,0.02)",
+                    border: `1px solid ${day === d ? "var(--accent2)" : "var(--border)"}`,
+                    color: day === d ? "var(--accent2)" : "var(--muted)",
+                    padding: "0.35rem", borderRadius: "4px", fontSize: "0.65rem", cursor: "pointer"
+                  }}
+                >
+                  {d}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Time Picker */}
+          <div>
+            <label style={{ fontSize: "0.6rem", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: "0.25rem" }}>Available Slot</label>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.3rem" }}>
+              {timeSlots.map(t => (
+                <button
+                  type="button"
+                  key={t}
+                  onClick={() => setTime(t)}
+                  style={{
+                    background: time === t ? "rgba(200,241,53,0.12)" : "rgba(255,255,255,0.02)",
+                    border: `1px solid ${time === t ? "var(--accent)" : "var(--border)"}`,
+                    color: time === t ? "var(--accent)" : "var(--muted)",
+                    padding: "0.3rem 0", borderRadius: "4px", fontSize: "0.6rem", cursor: "pointer"
+                  }}
+                >
+                  {t}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Patient Details */}
+          <div>
+            <label style={{ fontSize: "0.6rem", color: "var(--muted)", textTransform: "uppercase", display: "block", marginBottom: "0.25rem" }}>Patient Name</label>
+            <input 
+              type="text" 
+              required
+              placeholder="e.g. John Doe"
+              value={patientName}
+              onChange={(e) => setPatientName(e.target.value)}
+              style={{ width: "100%", padding: "0.45rem", background: "rgba(255,255,255,0.03)", border: "1px solid var(--border)", color: "#fff", borderRadius: "4px", fontSize: "0.7rem", fontFamily: "inherit", outline: "none", cursor: "text" }}
+            />
+          </div>
+
+          {/* Book Slot */}
+          <button 
+            type="submit" 
+            disabled={loading || !patientName.trim()}
+            style={{
+              width: "100%", background: "var(--accent2)", border: "none", padding: "0.5rem", borderRadius: "4px",
+              color: "#0a0a0f", fontWeight: "700", fontSize: "0.7rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem", cursor: "pointer", marginTop: "0.25rem"
+            }}
+          >
+            {loading ? <FiRefreshCw className="spin" size={12} /> : <FiCalendar size={12} />}
+            {loading ? "Checking clinic timetable..." : "Schedule Appointment"}
+          </button>
+        </form>
+      ) : (
+        /* Ticket confirmation */
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          style={{ background: "rgba(0,0,0,0.25)", border: "1px solid rgba(74,240,196,0.2)", borderRadius: "6px", padding: "1.25rem", display: "flex", flexDirection: "column", gap: "0.6rem" }}
+        >
+          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.75rem", color: "var(--accent2)", fontWeight: "700" }}>
+            <FiCheckCircle size={14} /> Appointment Booked Successfully!
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem", borderLeft: "2px solid var(--accent)", paddingLeft: "0.75rem", margin: "0.5rem 0", fontSize: "0.7rem", color: "var(--muted)" }}>
+            <div>Patient: <span style={{ color: "#fff", fontWeight: "600" }}>{patientName}</span></div>
+            <div>Treatment: <span style={{ color: "#fff" }}>{service}</span></div>
+            <div>Time: <span style={{ color: "var(--accent)" }}>{day} at {time}</span></div>
+            <div>Clinic Address: <span style={{ color: "#fff" }}>Abhay Dental Care, Main Rd</span></div>
+          </div>
+          <div style={{ fontSize: "0.55rem", color: "var(--muted)", textTransform: "uppercase", display: "flex", justifyContent: "space-between", alignItems: "center", borderTop: "1px dashed var(--border)", paddingTop: "0.5rem" }}>
+            <span>Ref ID: ADC-992140</span>
+            <button 
+              type="button"
+              onClick={() => { setSubmitted(false); setPatientName(""); }}
+              style={{ background: "none", border: "none", color: "var(--accent2)", fontSize: "0.55rem", cursor: "pointer", textDecoration: "underline", padding: 0 }}
+            >
+              Book Another
+            </button>
+          </div>
+        </motion.div>
+      )}
+    </div>
+  );
+}
+

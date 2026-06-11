@@ -1,10 +1,7 @@
 import { useState } from "react";
 import "./index.css";
-import CustomCursor from "./components/CustomCursor";
-import Particles from "./components/Particles";
 import Navbar from "./components/Navbar";
 import Hero from "./components/Hero";
-import Marquee from "./components/Marquee";
 import Skills from "./components/Skills";
 import Projects from "./components/Projects";
 import Experience from "./components/Experience";
@@ -21,17 +18,11 @@ export default function App() {
 
   return (
     <PortfolioDataProvider>
-      <Particles />
-      <CustomCursor />
       <Navbar />
       
       <div className="snap-container">
         <div id="hero" className="snap-section">
           <Hero />
-        </div>
-        
-        <div className="marquee-wrap">
-          <Marquee />
         </div>
 
         <div id="skills" className="snap-section">

@@ -17,13 +17,16 @@ public class Publication {
     @Column(length = 1000)
     private String role;
 
+    private String link;
+
     public Publication() {}
 
-    public Publication(String type, String title, String meta, String role) {
+    public Publication(String type, String title, String meta, String role, String link) {
         this.type = type;
         this.title = title;
         this.meta = meta;
         this.role = role;
+        this.link = link;
     }
 
     // Getters and Setters
@@ -41,4 +44,7 @@ public class Publication {
 
     public String getRole() { return role; }
     public void setRole(String role) { this.role = role; }
+
+    public String getLink() { return link; }
+    public void setLink(String link) { this.link = link; }
 }

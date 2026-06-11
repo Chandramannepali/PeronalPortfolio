@@ -135,7 +135,7 @@ export default function Navbar() {
                 background: "none",
                 border: "none",
                 color: "var(--muted)",
-                cursor: "none",
+                cursor: "pointer",
                 display: "inline-flex",
                 alignItems: "center",
                 fontSize: "0.9rem",
@@ -192,7 +192,7 @@ export default function Navbar() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
                 style={{
-                  fontFamily: "'Syne', sans-serif", fontWeight: 700,
+                  fontFamily: "'Fraunces', serif", fontWeight: 700,
                   fontSize: "1.5rem", color: "var(--text)",
                   textDecoration: "none", letterSpacing: "-0.02em",
                 }}
@@ -207,7 +207,7 @@ export default function Navbar() {
                 background: "rgba(255,255,255,0.05)",
                 border: "1px solid var(--border)",
                 color: "var(--text)",
-                cursor: "none",
+                cursor: "pointer",
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "0.5rem",

@@ -25,3 +25,8 @@ Thumbs.db
 /backend/data/
 /backend/target/
 *.db
+
+# Next.js leftover artifacts
+portfolio/.next/
+portfolio/next-env.d.ts
+portfolio/tsconfig.tsbuildinfo
