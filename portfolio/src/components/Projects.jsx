@@ -11,42 +11,14 @@ export default function Projects() {
   const [ref, inView] = useInView(0.05);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [openDemo, setOpenDemo] = useState({});
-  const [timelineProgress, setTimelineProgress] = useState(0);
 
   const nextSlide = () => {
-    setTimelineProgress(0);
     setCurrentSlide((prev) => (prev + 1) % projectsData.length);
   };
 
   const prevSlide = () => {
-    setTimelineProgress(0);
     setCurrentSlide((prev) => (prev - 1 + projectsData.length) % projectsData.length);
   };
-
-  useEffect(() => {
-    // If any interactive simulator is open/flipped, pause autoplay
-    const isAnyDemoOpen = Object.values(openDemo).some(Boolean);
-    if (isAnyDemoOpen) {
-      setTimelineProgress(0);
-      return;
-    }
-
-    const interval = 100; // update progress every 100ms
-    const totalDuration = 10000; // 10 seconds
-    const increment = (interval / totalDuration) * 100;
-
-    const timer = setInterval(() => {
-      setTimelineProgress((prev) => {
-        if (prev >= 100) {
-          setCurrentSlide((s) => (s + 1) % projectsData.length);
-          return 0;
-        }
-        return prev + increment;
-      });
-    }, interval);
-
-    return () => clearInterval(timer);
-  }, [currentSlide, openDemo, projectsData.length]);
 
   const toggleDemo = (num) => {
     setOpenDemo((prev) => ({ ...prev, [num]: !prev[num] }));
@@ -76,25 +48,6 @@ export default function Projects() {
             <button className="deck-nav-btn" onClick={nextSlide} title="Next Project">
               <FiChevronRight size={20} />
             </button>
-          </div>
-        </div>
-
-        {/* Timeline Indicator */}
-        <div className="project-timeline-container">
-          <div className="project-timeline-track">
-            <motion.div 
-              className="project-timeline-bar" 
-              style={{ width: `${timelineProgress}%` }}
-            />
-          </div>
-          <div className="project-timeline-text">
-            <span>{projectsData[currentSlide]?.title}</span>
-            <span>
-              {Object.values(openDemo).some(Boolean) 
-                ? "Autoplay Paused (Testing Simulator)" 
-                : `${Math.ceil((10000 - (timelineProgress / 100) * 10000) / 1000)}s remaining`
-              }
-            </span>
           </div>
         </div>
 
@@ -136,57 +89,65 @@ export default function Projects() {
                     
                     {/* FRONT FACE: Project Info */}
                     <div className="flip-card-front">
-                      <TiltCard className="project-card" style={{ position: "relative", overflow: "hidden", padding: "0", height: "100%", display: "flex", flexDirection: "column", flex: 1 }}>
-                        <div className="project-image-container" style={{ overflow: "hidden", position: "relative", height: "150px" }}>
-                          <img 
-                            src={p.image} 
-                            alt={p.title} 
-                            className="project-image"
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                            }}
-                            style={{
-                              width: "100%",
-                              height: "100%",
-                              objectFit: "cover",
-                              transition: "transform 0.5s ease",
-                            }}
-                          />
-                          <div className="project-image-overlay" />
-                        </div>
-                        <div className="project-card-body" style={{ padding: "1.25rem", flex: 1, display: "flex", flexDirection: "column" }}>
-                          <div className="project-number">{p.number} / Project</div>
-                          <h3 className="project-title" style={{ fontSize: "1.1rem", marginBottom: "0.4rem" }}>{p.title}</h3>
-                          <div className="project-stack">
-                            {p.stack.map((s) => <span className="stack-tag" key={s}>{s}</span>)}
+                      <TiltCard className="project-card" style={{ position: "relative", overflow: "hidden", padding: "0", height: "100%", display: "flex", flex: 1 }}>
+                        <div className="project-card-layout">
+                          
+                          {/* Left side: Project Image */}
+                          <div className="project-image-side">
+                            <img 
+                              src={p.image} 
+                              alt={p.title} 
+                              className="project-image"
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                              style={{
+                                width: "100%",
+                                height: "100%",
+                                objectFit: "cover",
+                                transition: "transform 0.5s ease",
+                              }}
+                            />
+                            <div className="project-image-overlay" />
                           </div>
-                          <ul className="project-bullets" style={{ marginBottom: "1rem" }}>
-                            {p.bullets.slice(0, 2).map((b, j) => (
-                              <li key={j} style={{ fontSize: "0.78rem", lineHeight: "1.3", marginBottom: "0.25rem" }}>
-                                {b}
-                              </li>
-                            ))}
-                          </ul>
 
-                          <button
-                            onClick={() => toggleDemo(p.number)}
-                            className="btn btn-outline"
-                            style={{
-                              width: "100%",
-                              marginTop: "auto",
-                              display: "flex",
-                              alignItems: "center",
-                              justifyContent: "center",
-                              gap: "0.5rem",
-                              borderStyle: "dashed",
-                              borderColor: "var(--accent)",
-                              color: "var(--accent)",
-                              padding: "0.6rem 1rem",
-                              fontSize: "0.7rem",
-                            }}
-                          >
-                            Try Interactive Simulator
-                          </button>
+                          {/* Right side: Project Details */}
+                          <div className="project-body-side">
+                            <div>
+                              <div className="project-number">{p.number} / Project</div>
+                              <h3 className="project-title" style={{ fontSize: "1.2rem", marginBottom: "0.45rem" }}>{p.title}</h3>
+                              <div className="project-stack">
+                                {p.stack.map((s) => <span className="stack-tag" key={s}>{s}</span>)}
+                              </div>
+                              <ul className="project-bullets">
+                                {p.bullets.slice(0, 2).map((b, j) => (
+                                  <li key={j} style={{ fontSize: "0.78rem", lineHeight: "1.4", marginBottom: "0.35rem" }}>
+                                    {b}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+
+                            <button
+                              onClick={() => toggleDemo(p.number)}
+                              className="btn btn-outline"
+                              style={{
+                                width: "100%",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                gap: "0.5rem",
+                                borderStyle: "dashed",
+                                borderColor: "var(--accent)",
+                                color: "var(--accent)",
+                                padding: "0.65rem 1rem",
+                                fontSize: "0.75rem",
+                              }}
+                            >
+                              Try Interactive Simulator
+                            </button>
+                          </div>
+
                         </div>
                       </TiltCard>
                     </div>

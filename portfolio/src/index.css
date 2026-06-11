@@ -892,40 +892,35 @@ section { padding: 6rem 4rem; }
 .projects-stack-container {
   position: relative;
   width: 100%;
-  max-width: 500px;
-  height: 550px;
+  max-width: 760px;
+  height: 520px;
   margin: 2rem auto;
   perspective: 1500px;
 }
 .projects-stack-card-wrapper {
   transform-style: preserve-3d;
   width: 100%;
-  height: 480px;
+  height: 450px;
 }
-.project-timeline-container {
-  max-width: 500px;
-  margin: 0 auto;
-}
-.project-timeline-track {
-  width: 100%;
-  height: 4px;
-  background: rgba(255,255,255,0.06);
-  border-radius: 99px;
-  overflow: hidden;
-}
-.project-timeline-bar {
-  height: 100%;
-  background: var(--accent);
-  box-shadow: 0 0 10px var(--accent);
-}
-.project-timeline-text {
+.project-card-layout {
   display: flex;
+  flex-direction: row;
+  height: 100%;
+  width: 100%;
+}
+.project-image-side {
+  width: 44%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid var(--border);
+}
+.project-body-side {
+  width: 56%;
+  padding: 2.25rem 2rem;
+  display: flex;
+  flex-direction: column;
   justify-content: space-between;
-  font-size: 0.65rem;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 0.12em;
-  margin-top: 0.5rem;
 }
 .deck-nav-btn {
   width: 44px;
@@ -946,6 +941,29 @@ section { padding: 6rem 4rem; }
   border-color: var(--accent);
   color: var(--accent);
   transform: scale(1.08);
+}
+
+@media (max-width: 680px) {
+  .projects-stack-container {
+    max-width: 100%;
+    height: 600px;
+  }
+  .projects-stack-card-wrapper {
+    height: 550px;
+  }
+  .project-card-layout {
+    flex-direction: column;
+  }
+  .project-image-side {
+    width: 100%;
+    height: 180px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .project-body-side {
+    width: 100%;
+    padding: 1.5rem;
+  }
 }
 
 @keyframes radarPulse {
