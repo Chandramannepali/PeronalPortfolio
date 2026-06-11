@@ -888,64 +888,64 @@ section { padding: 6rem 4rem; }
   .contact-meta { flex-direction: column; align-items: center; }
 }
 
-/* Horizontal Slider */
-.projects-slider-container {
+/* Stacked Card Deck */
+.projects-stack-container {
   position: relative;
   width: 100%;
+  max-width: 500px;
+  height: 550px;
+  margin: 2rem auto;
+  perspective: 1500px;
 }
-.projects-slider-window {
+.projects-stack-card-wrapper {
+  transform-style: preserve-3d;
   width: 100%;
+  height: 480px;
+}
+.project-timeline-container {
+  max-width: 500px;
+  margin: 0 auto;
+}
+.project-timeline-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 99px;
   overflow: hidden;
-  padding: 1.5rem 0.5rem;
-  margin: -1.5rem -0.5rem;
 }
-.projects-slider-track {
+.project-timeline-bar {
+  height: 100%;
+  background: var(--accent);
+  box-shadow: 0 0 10px var(--accent);
+}
+.project-timeline-text {
   display: flex;
-  gap: 1.5rem;
-  width: max-content;
+  justify-content: space-between;
+  font-size: 0.65rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  margin-top: 0.5rem;
 }
-.projects-slider-card-wrapper {
-  flex-shrink: 0;
-  width: calc(50vw - 4.5rem);
-  max-width: 520px;
-  min-width: 320px;
-}
-@media (max-width: 768px) {
-  .projects-slider-card-wrapper {
-    width: calc(100vw - 3rem);
-  }
-}
-
-.slider-nav-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 48px;
-  height: 48px;
+.deck-nav-btn {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
-  background: var(--card);
-  border: 1px solid var(--border);
-  color: var(--accent);
-  display: flex;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.07);
+  color: var(--text);
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  z-index: 20;
   transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  backdrop-filter: blur(8px);
 }
-.slider-nav-btn:hover {
+.deck-nav-btn:hover {
+  background: rgba(200, 241, 53, 0.08);
   border-color: var(--accent);
-  color: #000;
-  background: var(--accent);
-  transform: translateY(-50%) scale(1.1);
-}
-.slider-nav-btn.btn-next {
-  right: -24px;
-  animation: radarPulse 2s infinite;
-}
-.slider-nav-btn.btn-prev {
-  left: -24px;
+  color: var(--accent);
+  transform: scale(1.08);
 }
 
 @keyframes radarPulse {

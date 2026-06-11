@@ -10,33 +10,43 @@ export default function Projects() {
   const { projectsData } = usePortfolio();
   const [ref, inView] = useInView(0.05);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isMobile, setIsMobile] = useState(false);
   const [openDemo, setOpenDemo] = useState({});
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768);
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
-
-  const maxSlide = isMobile ? projectsData.length - 1 : projectsData.length - 2;
+  const [timelineProgress, setTimelineProgress] = useState(0);
 
   const nextSlide = () => {
-    if (currentSlide < maxSlide) {
-      setCurrentSlide((prev) => prev + 1);
-    } else {
-      setCurrentSlide(0); // loop back
-    }
+    setTimelineProgress(0);
+    setCurrentSlide((prev) => (prev + 1) % projectsData.length);
   };
 
   const prevSlide = () => {
-    if (currentSlide > 0) {
-      setCurrentSlide((prev) => prev - 1);
-    } else {
-      setCurrentSlide(maxSlide);
-    }
+    setTimelineProgress(0);
+    setCurrentSlide((prev) => (prev - 1 + projectsData.length) % projectsData.length);
   };
+
+  useEffect(() => {
+    // If any interactive simulator is open/flipped, pause autoplay
+    const isAnyDemoOpen = Object.values(openDemo).some(Boolean);
+    if (isAnyDemoOpen) {
+      setTimelineProgress(0);
+      return;
+    }
+
+    const interval = 100; // update progress every 100ms
+    const totalDuration = 10000; // 10 seconds
+    const increment = (interval / totalDuration) * 100;
+
+    const timer = setInterval(() => {
+      setTimelineProgress((prev) => {
+        if (prev >= 100) {
+          setCurrentSlide((s) => (s + 1) % projectsData.length);
+          return 0;
+        }
+        return prev + increment;
+      });
+    }, interval);
+
+    return () => clearInterval(timer);
+  }, [currentSlide, openDemo, projectsData.length]);
 
   const toggleDemo = (num) => {
     setOpenDemo((prev) => ({ ...prev, [num]: !prev[num] }));
@@ -45,104 +55,118 @@ export default function Projects() {
   return (
     <section id="projects">
       <div className="section-inner" ref={ref}>
-        <motion.p className="section-label"
-          initial={{ opacity: 0, x: -30 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        >What I've built</motion.p>
-        <motion.h2 className="section-title"
-          initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
-          animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
-          transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
-        >Projects</motion.h2>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1rem", marginBottom: "2rem" }}>
+          <div>
+            <motion.p className="section-label"
+              initial={{ opacity: 0, x: -30 }}
+              animate={inView ? { opacity: 1, x: 0 } : {}}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            >What I've built</motion.p>
+            <motion.h2 className="section-title" style={{ margin: 0 }}
+              initial={{ opacity: 0, y: 40, filter: "blur(8px)" }}
+              animate={inView ? { opacity: 1, y: 0, filter: "blur(0px)" } : {}}
+              transition={{ duration: 0.8, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            >Projects</motion.h2>
+          </div>
 
-        <div className="projects-slider-container">
-          <div className="projects-slider-window">
+          <div style={{ display: "flex", alignItems: "center", gap: "0.75rem" }}>
+            <button className="deck-nav-btn" onClick={prevSlide} title="Previous Project">
+              <FiChevronLeft size={20} />
+            </button>
+            <button className="deck-nav-btn" onClick={nextSlide} title="Next Project">
+              <FiChevronRight size={20} />
+            </button>
+          </div>
+        </div>
+
+        {/* Timeline Indicator */}
+        <div className="project-timeline-container">
+          <div className="project-timeline-track">
             <motion.div 
-              className="projects-slider-track"
-              animate={{ x: isMobile ? `calc(-${currentSlide} * (100vw - 1.5rem))` : `calc(-${currentSlide} * (50vw - 3rem))` }}
-              transition={{ type: "spring", stiffness: 220, damping: 26 }}
-            >
-              {projectsData.map((p, i) => (
-                <div className="projects-slider-card-wrapper" key={p.number}>
-                  <div className="flip-card-container">
-                    <div className={`flip-card-inner ${openDemo[p.number] ? "flipped" : ""}`}>
-                      
-                      {/* FRONT FACE: Project Info */}
-                      <div className="flip-card-front">
-                        <TiltCard className="project-card" style={{ position: "relative", overflow: "hidden", padding: "0", height: "100%", display: "flex", flexDirection: "column", flex: 1 }}>
-                          {/* Project Image Container */}
-                          <div className="project-image-container" style={{ overflow: "hidden", position: "relative", height: "150px" }}>
-                            <img 
-                              src={p.image} 
-                              alt={p.title} 
-                              className="project-image"
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                              }}
-                              style={{
-                                width: "100%",
-                                height: "100%",
-                                objectFit: "cover",
-                                transition: "transform 0.5s ease",
-                              }}
-                            />
-                            <div className="project-image-overlay" />
-                          </div>
-                          <div className="project-card-body" style={{ padding: "1.25rem", flex: 1, display: "flex", flexDirection: "column" }}>
-                            <div className="project-number">{p.number} / Project</div>
-                            <h3 className="project-title" style={{ fontSize: "1.1rem", marginBottom: "0.4rem" }}>{p.title}</h3>
-                            <div className="project-stack">
-                              {p.stack.map((s) => <span className="stack-tag" key={s}>{s}</span>)}
-                            </div>
-                            <ul className="project-bullets" style={{ marginBottom: "1rem" }}>
-                              {p.bullets.slice(0, 2).map((b, j) => (
-                                <li key={j} style={{ fontSize: "0.78rem", lineHeight: "1.3", marginBottom: "0.25rem" }}>
-                                  {b}
-                                </li>
-                              ))}
-                            </ul>
+              className="project-timeline-bar" 
+              style={{ width: `${timelineProgress}%` }}
+            />
+          </div>
+          <div className="project-timeline-text">
+            <span>{projectsData[currentSlide]?.title}</span>
+            <span>
+              {Object.values(openDemo).some(Boolean) 
+                ? "Autoplay Paused (Testing Simulator)" 
+                : `${Math.ceil((10000 - (timelineProgress / 100) * 10000) / 1000)}s remaining`
+              }
+            </span>
+          </div>
+        </div>
 
-                            {/* Try Simulator Button */}
-                            <button
-                              onClick={() => toggleDemo(p.number)}
-                              className="btn btn-outline"
-                              style={{
-                                width: "100%",
-                                marginTop: "auto",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                gap: "0.5rem",
-                                borderStyle: "dashed",
-                                borderColor: "var(--accent)",
-                                color: "var(--accent)",
-                                padding: "0.6rem 1rem",
-                                fontSize: "0.7rem",
-                              }}
-                            >
-                              Try Interactive Simulator
-                            </button>
-                          </div>
-                        </TiltCard>
-                      </div>
+        <div className="projects-stack-container">
+          {projectsData.map((p, i) => {
+            const total = projectsData.length;
+            const pos = (i - currentSlide + total) % total;
+            const isActive = pos === 0;
 
-                      {/* BACK FACE: Interactive Simulator */}
-                      <div className="flip-card-back">
-                        <div className="project-card" style={{ position: "relative", overflow: "hidden", padding: "1.5rem", height: "100%", display: "flex", flexDirection: "column", flex: 1 }}>
-                          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
-                            <div>
-                              <div className="project-number" style={{ marginBottom: "0.2rem" }}>{p.number} / Interactive Simulator</div>
-                              <h3 className="project-title" style={{ fontSize: "1.1rem", margin: 0 }}>{p.title}</h3>
-                            </div>
+            return (
+              <motion.div
+                key={p.number}
+                className="projects-stack-card-wrapper"
+                style={{
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                  top: 0,
+                  left: 0,
+                  originX: 0.5,
+                  originY: 0.5,
+                  pointerEvents: isActive ? "auto" : "none",
+                }}
+                animate={{
+                  zIndex: total - pos,
+                  opacity: pos === 3 ? 0 : 1 - pos * 0.22,
+                  scale: 1 - pos * 0.04,
+                  y: pos * 22,
+                  rotate: pos === 0 ? 0 : pos % 2 === 0 ? pos * 1.5 : pos * -1.5,
+                }}
+                transition={{
+                  type: "spring",
+                  stiffness: 150,
+                  damping: 22,
+                }}
+              >
+                <div className="flip-card-container">
+                  <div className={`flip-card-inner ${openDemo[p.number] ? "flipped" : ""}`}>
+                    
+                    {/* FRONT FACE: Project Info */}
+                    <div className="flip-card-front">
+                      <TiltCard className="project-card" style={{ position: "relative", overflow: "hidden", padding: "0", height: "100%", display: "flex", flexDirection: "column", flex: 1 }}>
+                        <div className="project-image-container" style={{ overflow: "hidden", position: "relative", height: "150px" }}>
+                          <img 
+                            src={p.image} 
+                            alt={p.title} 
+                            className="project-image"
+                            onError={(e) => {
+                              e.target.style.display = 'none';
+                            }}
+                            style={{
+                              width: "100%",
+                              height: "100%",
+                              objectFit: "cover",
+                              transition: "transform 0.5s ease",
+                            }}
+                          />
+                          <div className="project-image-overlay" />
+                        </div>
+                        <div className="project-card-body" style={{ padding: "1.25rem", flex: 1, display: "flex", flexDirection: "column" }}>
+                          <div className="project-number">{p.number} / Project</div>
+                          <h3 className="project-title" style={{ fontSize: "1.1rem", marginBottom: "0.4rem" }}>{p.title}</h3>
+                          <div className="project-stack">
+                            {p.stack.map((s) => <span className="stack-tag" key={s}>{s}</span>)}
                           </div>
-                          
-                          <div style={{ flex: 1, overflowY: "auto", paddingRight: "0.25rem", marginBottom: "1rem" }}>
-                            {p.number === "01" && <TokenizationDemo />}
-                            {p.number === "02" && <FarmLinkDemo />}
-                            {p.number === "03" && <AmmasPicklesDemo />}
-                            {p.number === "04" && <AbhayDentalDemo />}
-                          </div>
+                          <ul className="project-bullets" style={{ marginBottom: "1rem" }}>
+                            {p.bullets.slice(0, 2).map((b, j) => (
+                              <li key={j} style={{ fontSize: "0.78rem", lineHeight: "1.3", marginBottom: "0.25rem" }}>
+                                {b}
+                              </li>
+                            ))}
+                          </ul>
 
                           <button
                             onClick={() => toggleDemo(p.number)}
@@ -155,43 +179,62 @@ export default function Projects() {
                               justifyContent: "center",
                               gap: "0.5rem",
                               borderStyle: "dashed",
-                              borderColor: "var(--accent2)",
-                              color: "var(--accent2)",
+                              borderColor: "var(--accent)",
+                              color: "var(--accent)",
                               padding: "0.6rem 1rem",
                               fontSize: "0.7rem",
                             }}
                           >
-                            Hide Simulator
+                            Try Interactive Simulator
                           </button>
                         </div>
-                      </div>
-
+                      </TiltCard>
                     </div>
+
+                    {/* BACK FACE: Interactive Simulator */}
+                    <div className="flip-card-back">
+                      <div className="project-card" style={{ position: "relative", overflow: "hidden", padding: "1.5rem", height: "100%", display: "flex", flexDirection: "column", flex: 1 }}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+                          <div>
+                            <div className="project-number" style={{ marginBottom: "0.2rem" }}>{p.number} / Interactive Simulator</div>
+                            <h3 className="project-title" style={{ fontSize: "1.1rem", margin: 0 }}>{p.title}</h3>
+                          </div>
+                        </div>
+                        
+                        <div style={{ flex: 1, overflowY: "auto", paddingRight: "0.25rem", marginBottom: "1rem" }}>
+                          {p.number === "01" && <TokenizationDemo />}
+                          {p.number === "02" && <FarmLinkDemo />}
+                          {p.number === "03" && <AmmasPicklesDemo />}
+                          {p.number === "04" && <AbhayDentalDemo />}
+                        </div>
+
+                        <button
+                          onClick={() => toggleDemo(p.number)}
+                          className="btn btn-outline"
+                          style={{
+                            width: "100%",
+                            marginTop: "auto",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "0.5rem",
+                            borderStyle: "dashed",
+                            borderColor: "var(--accent2)",
+                            color: "var(--accent2)",
+                            padding: "0.6rem 1rem",
+                            fontSize: "0.7rem",
+                          }}
+                        >
+                          Hide Simulator
+                        </button>
+                      </div>
+                    </div>
+
                   </div>
                 </div>
-              ))}
-            </motion.div>
-          </div>
-
-          {/* Navigation Button at Right Corner */}
-          {currentSlide < maxSlide && (
-            <button 
-              className="slider-nav-btn btn-next" 
-              onClick={nextSlide}
-              title="Next Project"
-            >
-              <FiChevronRight size={24} />
-            </button>
-          )}
-          {currentSlide > 0 && (
-            <button 
-              className="slider-nav-btn btn-prev" 
-              onClick={prevSlide}
-              title="Previous Project"
-            >
-              <FiChevronLeft size={24} />
-            </button>
-          )}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
     </section>
