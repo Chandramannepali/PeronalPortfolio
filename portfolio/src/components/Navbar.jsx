@@ -114,7 +114,7 @@ export default function Navbar() {
           className="nav-logo"
           onClick={(e) => handleNavClick(e, "hero")}
         >
-          {profileData.fullName.split(" ").map(w => w[0]).join("")}/
+          suzo.ai
         </a>
         <ul className="nav-links" style={{ alignItems: "center" }}>
           {links.map((l) => (

@@ -51,9 +51,8 @@ export default function App() {
 
         <div id="contact" className="snap-section">
           <Contact />
+          <Footer onAdminClick={() => setShowAdmin(true)} />
         </div>
-
-        <Footer onAdminClick={() => setShowAdmin(true)} />
       </div>
 
       {showAdmin && <AdminDashboard onClose={() => setShowAdmin(false)} />}
