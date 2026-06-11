@@ -1,6 +1,6 @@
 import { marqueeItems } from "../data/portfolioData";
 import { FaPython, FaJava, FaReact, FaGitAlt, FaHtml5, FaCss3Alt, FaBrain } from "react-icons/fa";
-import { SiSupabase, SiStreamlit, SiHuggingface, SiPostgresql, SiCpu, SiArduino } from "react-icons/si";
+import { SiSupabase, SiStreamlit, SiHuggingface, SiPostgresql, SiOpenai, SiArduino } from "react-icons/si";
 
 const skillIcons = {
   "Python": <FaPython />,
@@ -13,7 +13,7 @@ const skillIcons = {
   "Git": <FaGitAlt />,
   "HTML & CSS": <span style={{ display: "inline-flex", gap: "0.2rem" }}><FaHtml5 /><FaCss3Alt /></span>,
   "LLM Tooling": <FaBrain />,
-  "AI / ML": <SiCpu />,
+  "AI / ML": <SiOpenai />,
   "IoT": <SiArduino />,
 };
 
