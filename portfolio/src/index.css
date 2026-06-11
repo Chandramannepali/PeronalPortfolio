@@ -114,10 +114,8 @@ body::before {
   z-index: 50;
   padding: 1.5rem 4rem;
   display: flex; justify-content: space-between; align-items: center;
-  background: rgba(10, 10, 15, 0.55);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: transparent;
+  border-bottom: none;
   transition: transform 0.3s ease;
 }
 .navbar.hidden { transform: translateY(-100%); }
@@ -307,12 +305,10 @@ body::before {
 /* Marquee */
 .marquee-wrap {
   overflow: hidden;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: none;
+  border-bottom: none;
   padding: 0.75rem 0;
-  background: rgba(10, 10, 15, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: transparent;
 }
 .marquee-track {
   display: flex;
