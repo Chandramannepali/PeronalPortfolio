@@ -108,6 +108,49 @@ export default function Hero() {
         boxSizing: "border-box"
       }}
     >
+      {/* Background Video (High Quality GPU accelerated) */}
+      <video 
+        ref={bgVideoRef}
+        src="/assets/name_chandra_role_AI_full_s.mp4" 
+        autoPlay
+        loop
+        muted={isMuted}
+        playsInline
+        webkit-playsinline="true"
+        preload="auto"
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+          objectPosition: "70% center",
+          zIndex: 0,
+          pointerEvents: "none",
+          display: bgVideoPlayFailed ? "none" : "block",
+          transform: "translate3d(0, 0, 0)",
+          willChange: "transform",
+          backfaceVisibility: "hidden",
+          imageRendering: "auto",
+          opacity: 0.7
+        }}
+        onError={() => setBgVideoPlayFailed(true)}
+      />
+      {/* Lighter overlay for readability while keeping the background video bright and premium */}
+      <div 
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          background: "rgba(10, 10, 15, 0.45)",
+          zIndex: 1,
+          pointerEvents: "none"
+        }}
+      />
+
       {/* Top Part: Opportunities tag */}
       <motion.div 
         className="hero-tag" 
@@ -120,10 +163,18 @@ export default function Hero() {
         {profileData.tagline}
       </motion.div>
 
-      {/* Split Grid Content: Left Side Text, Right Side Video */}
-      <div className="hero-main-content">
-        
-        {/* Left Column: Name, subtitle, and CTA buttons */}
+      {/* Left-aligned overlay content container */}
+      <div style={{
+        width: "100%",
+        maxWidth: "1100px",
+        display: "flex",
+        justifyContent: "flex-start",
+        alignItems: "center",
+        zIndex: 5,
+        flex: 1,
+        padding: "0 2rem"
+      }}>
+        {/* Left Side: Name, subtitle, and CTA buttons */}
         <motion.div 
           className="hero-text-side"
           variants={containerVariants}
@@ -135,6 +186,7 @@ export default function Hero() {
             alignItems: "flex-start",
             justifyContent: "center",
             gap: "1.25rem",
+            maxWidth: "650px",
             width: "100%"
           }}
         >
@@ -142,7 +194,7 @@ export default function Hero() {
             className="hero-name" 
             variants={itemVariants}
             style={{ 
-              fontSize: "clamp(2rem, 5vw, 3.8rem)", 
+              fontSize: "clamp(2rem, 5.5vw, 3.8rem)", 
               textAlign: "left", 
               lineHeight: "1.05",
               marginBottom: 0 
@@ -181,90 +233,53 @@ export default function Hero() {
             </MagneticButton>
           </motion.div>
         </motion.div>
+      </div>
 
-        {/* Right Column: Video with 100% width and height of container */}
-        <motion.div 
-          className="hero-video-side"
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
+      {/* Floating control button (covers Gemini logo watermark in the bottom-right corner of screen) */}
+      <div style={{
+        position: "absolute",
+        bottom: "5rem",
+        right: "2rem",
+        zIndex: 10
+      }}>
+        <button
+          onClick={toggleMute}
           style={{
+            background: "#0c0c0e", 
+            border: "1px solid rgba(255, 255, 255, 0.15)",
+            borderRadius: "50%",
+            width: "56px",
+            height: "56px",
             display: "flex",
+            alignItems: "center",
             justifyContent: "center",
-            alignItems: "center",
-            width: "100%"
+            color: "var(--accent)",
+            cursor: "pointer",
+            transition: "all 0.3s ease",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.5)"
           }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.borderColor = "var(--accent)";
+            e.currentTarget.style.transform = "scale(1.05)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.borderColor = "rgba(255, 255, 255, 0.1)";
+            e.currentTarget.style.transform = "scale(1)";
+          }}
+          title={isMuted ? "Unmute Background Video" : "Mute Background Video"}
         >
-          <div style={{
-            position: "relative",
-            borderRadius: "16px",
-            overflow: "hidden",
-            boxShadow: "0 20px 45px rgba(0,0,0,0.5), 0 0 25px rgba(200,241,53,0.05)",
-            border: "1px solid rgba(255,255,255,0.1)",
-            background: "rgba(10,10,15,0.6)",
-            width: "100%",
-            maxWidth: "400px",
-            aspectRatio: "3 / 4",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center"
-          }}>
-            <video 
-              ref={bgVideoRef}
-              src="/assets/name_chandra_role_AI_full_s.mp4" 
-              autoPlay
-              loop
-              muted={isMuted}
-              playsInline
-              webkit-playsinline="true"
-              preload="auto"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "70% center",
-                display: bgVideoPlayFailed ? "none" : "block",
-              }}
-              onError={() => setBgVideoPlayFailed(true)}
-            />
-            
-            {/* Mute/Unmute Overlay Button positioned exactly to cover the Gemini watermark in the bottom-right corner of the video */}
-            <button
-              onClick={toggleMute}
-              style={{
-                position: "absolute",
-                bottom: "0.75rem",
-                right: "0.75rem",
-                zIndex: 10,
-                background: "#0c0c0e", 
-                border: "1px solid rgba(255, 255, 255, 0.2)",
-                borderRadius: "50%",
-                width: "44px",
-                height: "44px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                cursor: "pointer",
-                color: isMuted ? "var(--muted)" : "var(--accent)",
-                transition: "all 0.3s ease",
-                boxShadow: "0 4px 15px rgba(0,0,0,0.6)"
-              }}
-              title={isMuted ? "Unmute Intro Video" : "Mute Intro Video"}
-            >
-              {isMuted ? (
-                <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
-                  <line x1="1" y1="1" x2="23" y2="23"></line>
-                  <path d="M9 9v6a3 3 0 0 0 3 3h1.586l4.707 4.707A1 1 0 0 0 20 22V4a1 1 0 0 0-1.707-.707L13.586 8H12a3 3 0 0 0-3 3z"></path>
-                </svg>
-              ) : (
-                <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" height="16" width="16" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
-                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
-                </svg>
-              )}
-            </button>
-          </div>
-        </motion.div>
+          {isMuted ? (
+            <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" height="20" width="20" xmlns="http://www.w3.org/2000/svg">
+              <line x1="1" y1="1" x2="23" y2="23"></line>
+              <path d="M9 9v6a3 3 0 0 0 3 3h1.586l4.707 4.707A1 1 0 0 0 20 22V4a1 1 0 0 0-1.707-.707L13.586 8H12a3 3 0 0 0-3 3z"></path>
+            </svg>
+          ) : (
+            <svg stroke="currentColor" fill="none" strokeWidth="2" viewBox="0 0 24 24" strokeLinecap="round" strokeLinejoin="round" height="20" width="20" xmlns="http://www.w3.org/2000/svg">
+              <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+          )}
+        </button>
       </div>
 
       {/* Absolute Bottom Infinite Skills Bar */}
