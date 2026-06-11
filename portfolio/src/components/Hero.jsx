@@ -110,6 +110,7 @@ export default function Hero() {
           width: "100%",
           height: "100%",
           objectFit: "cover",
+          objectPosition: "70% center",
           zIndex: 0,
           pointerEvents: "none",
           display: bgVideoPlayFailed ? "none" : "block",
