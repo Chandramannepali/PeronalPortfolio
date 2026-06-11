@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { FiX, FiRefreshCw, FiMessageSquare, FiKey, FiEdit, FiPlus, FiTrash, FiSave, FiUser, FiAward, FiBookOpen, FiClock } from "react-icons/fi";
 import { usePortfolio } from "../context/PortfolioDataContext";
 
-const API_BASE = "http://localhost:8080/api";
+const API_BASE = (import.meta.env.VITE_API_URL || "http://localhost:8080") + "/api";
 
 export default function AdminDashboard({ onClose }) {
   const { refreshData } = usePortfolio();

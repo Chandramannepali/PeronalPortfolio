@@ -19,7 +19,8 @@ export function PortfolioDataProvider({ children }) {
 
   const fetchLiveData = async () => {
     try {
-      const response = await fetch("http://localhost:8080/api/profile");
+      const apiBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:8080";
+      const response = await fetch(`${apiBaseUrl}/api/profile`);
       if (!response.ok) {
         throw new Error("Failed to load live profile");
       }

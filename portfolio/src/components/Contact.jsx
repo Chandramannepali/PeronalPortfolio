@@ -5,7 +5,7 @@ import { usePortfolio } from "../context/PortfolioDataContext";
 import { useInView } from "../hooks/useInView";
 import MagneticButton from "./MagneticButton";
 
-const API_BASE = "http://localhost:8080/api";
+const API_BASE = (import.meta.env.VITE_API_URL || "http://localhost:8080") + "/api";
 
 export default function Contact() {
   const { profileData } = usePortfolio();
