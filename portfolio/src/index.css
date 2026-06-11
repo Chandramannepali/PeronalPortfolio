@@ -115,8 +115,16 @@ body::before {
   padding: 1.5rem 4rem;
   display: flex; justify-content: space-between; align-items: center;
   background: transparent;
-  border-bottom: none;
-  transition: transform 0.3s ease;
+  border-bottom: 1px solid transparent;
+  transition: transform 0.3s ease, background-color 0.4s ease, padding 0.4s ease, border-color 0.4s ease, box-shadow 0.4s ease;
+}
+.navbar.scrolled {
+  background: rgba(10, 10, 15, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.25);
+  padding: 1.1rem 4rem;
 }
 .navbar.hidden { transform: translateY(-100%); }
 .nav-logo {
@@ -876,6 +884,7 @@ section { padding: 6rem 4rem; }
 /* Responsive */
 @media (max-width: 768px) {
   .navbar { padding: 1.2rem 1.5rem; }
+  .navbar.scrolled { padding: 0.95rem 1.5rem; }
   .nav-links { display: none; }
   .mobile-menu-btn { display: block; }
   section { padding: 6.5rem 1.5rem 4.5rem; }

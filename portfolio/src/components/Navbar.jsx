@@ -19,6 +19,7 @@ export default function Navbar() {
   const [active, setActive] = useState("");
   const [scrollProgress, setScrollProgress] = useState(0);
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     if (theme === "light") {
@@ -68,6 +69,7 @@ export default function Navbar() {
       const onScroll = () => {
         const y = scrollContainer.scrollTop;
         setHidden(y > 80 && y > lastY);
+        setIsScrolled(y > 50);
         lastY = y;
 
         // Calculate scroll progress
@@ -104,7 +106,7 @@ export default function Navbar() {
   return (
     <>
       <motion.nav
-        className={`navbar ${hidden ? "hidden" : ""}`}
+        className={`navbar ${hidden ? "hidden" : ""} ${isScrolled ? "scrolled" : ""}`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
