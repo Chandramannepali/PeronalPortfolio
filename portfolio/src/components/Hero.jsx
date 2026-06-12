@@ -195,7 +195,7 @@ export default function Hero() {
             className="hero-summary" 
             variants={itemVariants}
           >
-            Ai Full stack Devloper
+            Ai Full stack Developer
           </motion.p>
 
           <motion.h1 

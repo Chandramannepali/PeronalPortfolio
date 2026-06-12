@@ -884,14 +884,33 @@ section { padding: 6rem 4rem; }
   to { transform: translate(-50%, -50%) rotate(360deg); }
 }
 
+.timeline-dot {
+  left: -3.5rem;
+  width: 32px;
+  height: 32px;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
+  .snap-container {
+    scroll-snap-type: none !important;
+    height: auto !important;
+    overflow-y: visible !important;
+  }
+  .snap-section {
+    min-height: auto !important;
+    height: auto !important;
+    scroll-snap-align: none !important;
+  }
+  .snap-section:not(#hero) {
+    scroll-margin-top: 0 !important;
+  }
   .navbar { padding: 1.2rem 1.5rem; }
   .navbar.scrolled { padding: 0.95rem 1.5rem; }
   .nav-links { display: none; }
   .mobile-menu-btn { display: block; }
-  section { padding: 6.5rem 1.5rem 4.5rem; }
-  .hero { padding: 6rem 1.5rem 3rem; }
+  section { padding: 5.5rem 1.25rem 3.5rem !important; }
+  .hero { padding: 6rem 1.25rem 3rem !important; }
   .site-footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
   .exp-card { grid-template-columns: 1fr; }
   .exp-period { text-align: left; }
@@ -957,23 +976,47 @@ section { padding: 6rem 4rem; }
 @media (max-width: 768px) {
   .projects-stack-container {
     max-width: 100%;
-    height: 600px;
+    height: 520px;
   }
   .projects-stack-card-wrapper {
-    height: 550px;
+    height: 470px;
   }
   .project-card-layout {
     flex-direction: column;
   }
   .project-image-side {
     width: 100%;
-    height: 180px;
+    height: 140px;
     border-right: none;
     border-bottom: 1px solid var(--border);
   }
   .project-body-side {
     width: 100%;
-    padding: 1.5rem;
+    padding: 1rem 1.25rem !important;
+    gap: 0.5rem;
+  }
+  .project-stack {
+    margin-bottom: 0.5rem !important;
+  }
+  .project-bullets {
+    gap: 0.35rem !important;
+  }
+  .project-bullets li {
+    font-size: 0.75rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .timeline-container {
+    padding-left: 1.5rem !important;
+  }
+  .timeline-dot {
+    left: -2rem !important;
+    width: 24px !important;
+    height: 24px !important;
+  }
+  .timeline-dot svg {
+    font-size: 10px !important;
   }
 }
 

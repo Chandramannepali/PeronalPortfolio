@@ -44,15 +44,13 @@ export default function Experience() {
             <div key={i} className="timeline-item" style={{ position: "relative", marginBottom: "4rem" }}>
               {/* Glowing Indicator Dot */}
               <motion.div 
+                className="timeline-dot"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={inView ? { scale: 1, opacity: 1 } : {}}
                 transition={{ duration: 0.5, delay: 0.3 + i * 0.2 }}
                 style={{
                   position: "absolute",
-                  left: "-3.5rem",
                   top: "10px",
-                  width: "32px",
-                  height: "32px",
                   borderRadius: "50%",
                   background: "var(--surface)",
                   border: "2px solid var(--accent)",
