@@ -14,12 +14,9 @@ const links = [
 
 export default function Navbar() {
   const { profileData } = usePortfolio();
-  const [hidden, setHidden] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [active, setActive] = useState("");
-  const [scrollProgress, setScrollProgress] = useState(0);
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
-  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
     if (theme === "light") {
@@ -60,53 +57,10 @@ export default function Navbar() {
     }
   };
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      const scrollContainer = document.querySelector(".snap-container");
-      if (!scrollContainer) return;
-
-      let lastY = 0;
-      const onScroll = () => {
-        const y = scrollContainer.scrollTop;
-        setHidden(y > 80 && y > lastY);
-        setIsScrolled(y > 50);
-        lastY = y;
-
-        // Calculate scroll progress
-        const totalScroll = scrollContainer.scrollHeight - scrollContainer.clientHeight;
-        if (totalScroll > 0) {
-          setScrollProgress(y / totalScroll);
-        }
-
-        // determine active section
-        const sections = links.map((l) => l.href.slice(1));
-        for (let i = sections.length - 1; i >= 0; i--) {
-          const el = document.getElementById(sections[i]);
-          if (el) {
-            const rect = el.getBoundingClientRect();
-            if (rect.top < 200) {
-              setActive(sections[i]);
-              break;
-            }
-          }
-        }
-      };
-
-      scrollContainer.addEventListener("scroll", onScroll, { passive: true });
-      onScroll(); // run once on mount
-
-      return () => {
-        scrollContainer.removeEventListener("scroll", onScroll);
-      };
-    }, 100);
-
-    return () => clearTimeout(timer);
-  }, []);
-
   return (
     <>
       <motion.nav
-        className={`navbar ${hidden ? "hidden" : ""} ${isScrolled ? "scrolled" : ""}`}
+        className="navbar"
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
@@ -153,19 +107,6 @@ export default function Navbar() {
         <button className="mobile-menu-btn" onClick={() => setMobileOpen(!mobileOpen)}>
           {mobileOpen ? <HiX /> : <HiMenuAlt3 />}
         </button>
-
-        {/* Scroll Progress Bar */}
-        <div 
-          style={{
-            position: "absolute",
-            bottom: 0,
-            left: 0,
-            width: `${scrollProgress * 100}%`,
-            height: "2px",
-            background: "var(--gradient-accent)",
-            transition: "width 0.1s ease",
-          }}
-        />
       </motion.nav>
 
       {/* Mobile overlay */}
