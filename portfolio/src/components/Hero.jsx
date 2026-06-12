@@ -191,24 +191,12 @@ export default function Hero() {
             {profileData.tagline}
           </motion.div>
 
-          <motion.h1 
-            className="hero-name" 
-            variants={itemVariants}
-          >
-            <span className="name-first">
-              <TextScramble text={profileData.name} as="span" />
-            </span>
-            <motion.span className="name-second">
-              {profileData.nameLine2}
-            </motion.span>
-          </motion.h1>
-
           <motion.p 
             className="hero-summary" 
             variants={itemVariants}
             style={{ 
               textAlign: "left", 
-              margin: 0, 
+              margin: "0 0 0.5rem 0", 
               fontFamily: "Outfit, sans-serif",
               fontSize: "1.15rem",
               fontWeight: "600",
@@ -219,6 +207,19 @@ export default function Hero() {
           >
             Ai Full stack Devloper
           </motion.p>
+
+          <motion.h1 
+            className="hero-name" 
+            variants={itemVariants}
+            style={{ marginBottom: "1.5rem" }}
+          >
+            <span className="name-first">
+              <TextScramble text={profileData.name} as="span" />
+            </span>
+            <motion.span className="name-second">
+              {profileData.nameLine2}
+            </motion.span>
+          </motion.h1>
 
           <motion.div className="hero-cta" variants={itemVariants} style={{ justifyContent: "flex-start", marginTop: "0.5rem" }}>
             <MagneticButton href="#projects" className="btn btn-primary btn-glow">
