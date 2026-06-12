@@ -1027,4 +1027,44 @@ section { padding: 6rem 4rem; }
   }
 }
 
+/* ===== PREMIUM HERO NAME TYPOGRAPHY SYSTEM ===== */
+.hero-name {
+  font-family: 'Outfit', sans-serif !important;
+  font-size: clamp(3.2rem, 7.8vw, 5.8rem) !important;
+  font-weight: 900 !important;
+  line-height: 0.95 !important;
+  letter-spacing: -0.04em !important;
+  text-transform: uppercase !important;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  align-items: flex-start;
+}
+.hero-name .name-first {
+  background: linear-gradient(to right, #ffffff 40%, rgba(255, 255, 255, 0.75) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: block;
+}
+.hero-name .name-second {
+  font-family: 'Fraunces', serif !important;
+  font-weight: 300 !important;
+  font-style: italic !important;
+  text-transform: none !important;
+  letter-spacing: -0.02em !important;
+  background: var(--gradient-accent);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: block;
+  filter: drop-shadow(0 2px 10px rgba(229, 193, 88, 0.1));
+}
+
+@media (max-width: 768px) {
+  .hero-name {
+    align-items: center !important;
+  }
+}
+
+
 

@@ -194,16 +194,11 @@ export default function Hero() {
           <motion.h1 
             className="hero-name" 
             variants={itemVariants}
-            style={{ 
-              fontSize: "clamp(2rem, 5.5vw, 3.8rem)", 
-              textAlign: "left", 
-              lineHeight: "1.05",
-              marginBottom: 0 
-            }}
           >
-            <TextScramble text={profileData.name} className="name-glitch" as="span" />
-            <br />
-            <motion.span className="line2" style={{ WebkitTextStroke: "1px rgba(232,232,240,0.2)" }}>
+            <span className="name-first">
+              <TextScramble text={profileData.name} as="span" />
+            </span>
+            <motion.span className="name-second">
               {profileData.nameLine2}
             </motion.span>
           </motion.h1>

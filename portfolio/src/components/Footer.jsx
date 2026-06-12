@@ -5,7 +5,7 @@ export default function Footer({ onAdminClick }) {
   const { profileData } = usePortfolio();
   return (
     <footer className="site-footer">
-      <span>© {new Date().getFullYear()} Team Suzo</span>
+      <span>© {new Date().getFullYear()} Team MC</span>
       <span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
         Built with intention · {profileData.location.split(",")[0]}, AP
         <button 

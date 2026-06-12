@@ -119,7 +119,7 @@ export default function Navbar() {
           className="nav-logo"
           onClick={(e) => handleNavClick(e, "hero")}
         >
-          suzo.ai
+          mc.ai
         </a>
         <ul className="nav-links" style={{ alignItems: "center" }}>
           {links.map((l) => (
