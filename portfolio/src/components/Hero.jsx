@@ -194,16 +194,6 @@ export default function Hero() {
           <motion.p 
             className="hero-summary" 
             variants={itemVariants}
-            style={{ 
-              textAlign: "left", 
-              margin: "0 0 0.5rem 0", 
-              fontFamily: "Outfit, sans-serif",
-              fontSize: "1.15rem",
-              fontWeight: "600",
-              color: "var(--accent)",
-              letterSpacing: "0.08em",
-              textTransform: "uppercase"
-            }}
           >
             Ai Full stack Devloper
           </motion.p>

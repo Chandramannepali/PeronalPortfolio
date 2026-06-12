@@ -1028,36 +1028,48 @@ section { padding: 6rem 4rem; }
 }
 
 /* ===== PREMIUM HERO NAME TYPOGRAPHY SYSTEM ===== */
+.hero-summary {
+  font-family: 'Outfit', sans-serif !important;
+  font-size: clamp(1.3rem, 3.5vw, 1.95rem) !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+  background: linear-gradient(135deg, #c8f135 0%, #49f0c4 100%) !important; /* Neon Lime to Ice Teal highlight */
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  display: inline-block;
+  margin: 0 0 0.8rem 0 !important;
+  filter: drop-shadow(0 2px 10px rgba(200, 241, 53, 0.15));
+}
 .hero-name {
   font-family: 'Outfit', sans-serif !important;
-  font-size: clamp(3.2rem, 7.8vw, 5.8rem) !important;
-  font-weight: 900 !important;
-  line-height: 0.9 !important;
-  letter-spacing: -0.04em !important;
-  text-transform: uppercase !important;
+  font-size: clamp(2.4rem, 5.8vw, 4.0rem) !important; /* Reduced size */
+  font-weight: 800 !important;
+  line-height: 0.95 !important;
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.2rem;
+  gap: 0.25rem;
   align-items: flex-start;
 }
 .hero-name .name-first {
-  background: linear-gradient(to right, #ffffff 50%, #cbd5e1 100%);
+  text-transform: uppercase !important;
+  background: linear-gradient(to right, #ffffff, #cbd5e1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: block;
 }
 .hero-name .name-second {
   font-family: 'Fraunces', serif !important;
-  font-weight: 400 !important;
+  font-weight: 300 !important;
   font-style: italic !important;
   text-transform: none !important;
   letter-spacing: -0.02em !important;
-  background: linear-gradient(135deg, #c8f135 0%, #00f5a0 100%); /* Lime to Neo-Teal */
+  background: linear-gradient(135deg, #49f0c4 0%, #3b82f6 100%); /* Ice Teal to Royal Blue */
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: block;
-  filter: drop-shadow(0 0 25px rgba(0, 245, 160, 0.2));
+  filter: drop-shadow(0 0 20px rgba(73, 240, 196, 0.15));
 }
 
 @media (max-width: 768px) {
