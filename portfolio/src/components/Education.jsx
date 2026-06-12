@@ -9,7 +9,7 @@ export default function Education() {
   const [ref, inView] = useInView(0.1);
 
   return (
-    <section id="education" className="skills-section">
+    <section className="skills-section">
       <div className="section-inner" ref={ref}>
         <motion.p className="section-label"
           initial={{ opacity: 0, x: -30 }}

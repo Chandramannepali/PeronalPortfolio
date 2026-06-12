@@ -40,7 +40,12 @@ export default function Navbar() {
     if (el && container) {
       // Temporarily disable scroll snapping to allow smooth scroll animation
       container.style.scrollSnapType = "none";
-      el.scrollIntoView({ behavior: "smooth" });
+      
+      const targetScrollTop = targetId === "hero" ? 0 : el.offsetTop - 80;
+      container.scrollTo({
+        top: targetScrollTop,
+        behavior: "smooth"
+      });
       
       const handleScrollEnd = () => {
         container.style.scrollSnapType = "y mandatory";

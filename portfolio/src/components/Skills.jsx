@@ -66,7 +66,7 @@ export default function Skills() {
   const [hoveredIndex, setHoveredIndex] = useState(null);
 
   return (
-    <section id="skills" className="skills-section">
+    <section className="skills-section">
       <div className="section-inner" ref={ref}>
         <motion.p className="section-label"
           initial={{ opacity: 0, x: -30 }}

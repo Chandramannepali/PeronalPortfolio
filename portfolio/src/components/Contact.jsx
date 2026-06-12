@@ -37,7 +37,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="contact-section" style={{ position: "relative" }}>
+    <section className="contact-section" style={{ position: "relative" }}>
       <div className="section-inner" ref={ref}>
         <motion.p className="section-label" style={{ textAlign: "center" }}
           initial={{ opacity: 0, y: 20 }}

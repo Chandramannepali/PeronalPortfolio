@@ -9,7 +9,7 @@ export default function Experience() {
   const [ref, inView] = useInView(0.1);
 
   return (
-    <section id="experience" className="exp-section" style={{ position: "relative", overflow: "hidden" }}>
+    <section className="exp-section" style={{ position: "relative", overflow: "hidden" }}>
       <div className="section-inner" ref={ref}>
         <motion.p className="section-label"
           initial={{ opacity: 0, x: -30 }}

@@ -25,7 +25,7 @@ export default function Projects() {
   };
 
   return (
-    <section id="projects">
+    <section>
       <div className="section-inner" ref={ref}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", flexWrap: "wrap", gap: "1rem", marginBottom: "2rem" }}>
           <div>
