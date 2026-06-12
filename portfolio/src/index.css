@@ -894,11 +894,12 @@ section { padding: 6rem 4rem; }
 @media (max-width: 768px) {
   .snap-container {
     scroll-snap-type: none !important;
-    height: auto !important;
-    overflow-y: visible !important;
+    height: 100vh !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch;
   }
   .snap-section {
-    min-height: auto !important;
+    min-height: 100vh !important;
     height: auto !important;
     scroll-snap-align: none !important;
   }
