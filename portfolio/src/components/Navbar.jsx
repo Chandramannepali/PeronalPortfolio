@@ -14,6 +14,8 @@ const links = [
 
 export default function Navbar() {
   const { profileData } = usePortfolio();
+  const [hidden, setHidden] = useState(false);
+  const [isHero, setIsHero] = useState(true);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [active, setActive] = useState("");
   const [theme, setTheme] = useState(localStorage.getItem("theme") || "dark");
@@ -57,10 +59,57 @@ export default function Navbar() {
     }
   };
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const scrollContainer = document.querySelector(".snap-container");
+      if (!scrollContainer) return;
+
+      let lastY = 0;
+      const onScroll = () => {
+        const y = scrollContainer.scrollTop;
+        
+        // Determine if we are in the Hero section (top of the page)
+        const currentIsHero = y < 80;
+        setIsHero(currentIsHero);
+
+        if (currentIsHero) {
+          setHidden(false); // Always show navbar on Hero
+        } else {
+          // Hide when scrolling down, show (dropdown) when scrolling up (swiping down)
+          setHidden(y > lastY);
+        }
+        
+        lastY = y;
+
+        // determine active section
+        const sections = links.map((l) => l.href.slice(1));
+        for (let i = sections.length - 1; i >= 0; i--) {
+          const el = document.getElementById(sections[i]);
+          if (el) {
+            const rect = el.getBoundingClientRect();
+            if (rect.top < 200) {
+              setActive(sections[i]);
+              break;
+            }
+          }
+        }
+      };
+
+      scrollContainer.addEventListener("scroll", onScroll, { passive: true });
+      onScroll(); // run once on mount
+
+      return () => {
+        scrollContainer.removeEventListener("scroll", onScroll);
+      };
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <>
       <motion.nav
-        className="navbar"
+        className={`navbar ${hidden ? "hidden" : ""} ${!isHero ? "scrolled" : ""}`}
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}

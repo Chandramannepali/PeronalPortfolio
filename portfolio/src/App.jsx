@@ -18,8 +18,9 @@ export default function App() {
 
   return (
     <PortfolioDataProvider>
-      <div className="snap-container" style={{ position: "relative" }}>
-        <Navbar />
+      <Navbar />
+      
+      <div className="snap-container">
         <div id="hero" className="snap-section">
           <Hero />
         </div>
