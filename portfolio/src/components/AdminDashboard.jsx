@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiX, FiRefreshCw, FiMessageSquare, FiKey, FiEdit, FiPlus, FiTrash, FiSave, FiUser, FiAward, FiBookOpen, FiClock } from "react-icons/fi";
+import { FiX, FiRefreshCw, FiMessageSquare, FiKey, FiEdit, FiPlus, FiTrash, FiSave, FiUser, FiAward, FiBookOpen, FiClock, FiBarChart2 } from "react-icons/fi";
 import { usePortfolio } from "../context/PortfolioDataContext";
 
 const API_BASE = (import.meta.env.VITE_API_URL || "http://localhost:8080") + "/api";
@@ -33,6 +33,7 @@ export default function AdminDashboard({ onClose }) {
   const [expForm, setExpForm] = useState([]);
   const [eduForm, setEduForm] = useState([]);
   const [certsForm, setCertsForm] = useState([]);
+  const [analyticsData, setAnalyticsData] = useState(null);
 
   // New item draft states
   const [newSkill, setNewSkill] = useState({ category: "", name: "" });
@@ -46,14 +47,26 @@ export default function AdminDashboard({ onClose }) {
     "Authorization": sessionStorage.getItem("adminToken") || ""
   });
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (tokenInput === "admin123") {
-      sessionStorage.setItem("adminToken", tokenInput);
-      setIsAuthenticated(true);
-      setAuthError("");
-    } else {
-      setAuthError("Invalid Admin Passcode.");
+    setAuthError("");
+    try {
+      const res = await fetch(`${API_BASE}/admin/login`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ passcode: tokenInput })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        sessionStorage.setItem("adminToken", data.token);
+        setIsAuthenticated(true);
+        setTokenInput("");
+      } else {
+        const errData = await res.json().catch(() => ({}));
+        setAuthError(errData.message || "Invalid Admin Passcode.");
+      }
+    } catch {
+      setAuthError("Error connecting to backend.");
     }
   };
 
@@ -74,6 +87,13 @@ export default function AdminDashboard({ onClose }) {
       if (msgsRes.ok) {
         const msgs = await msgsRes.json();
         setMessages(msgs);
+      }
+
+      // Fetch analytics
+      const analyticsRes = await fetch(`${API_BASE}/admin/analytics`, { headers: getHeaders() });
+      if (analyticsRes.ok) {
+        const analytics = await analyticsRes.json();
+        setAnalyticsData(analytics);
       }
 
       // Fetch profile & main structure
@@ -479,6 +499,7 @@ export default function AdminDashboard({ onClose }) {
           padding: "0 1rem"
         }}>
           {[
+            { id: "analytics", label: "Analytics", icon: <FiBarChart2 /> },
             { id: "messages", label: "Messages", icon: <FiMessageSquare /> },
             { id: "profile", label: "Profile", icon: <FiUser /> },
             { id: "skills", label: "Skills", icon: <FiAward /> },
@@ -540,6 +561,135 @@ export default function AdminDashboard({ onClose }) {
             </div>
           ) : (
             <>
+              {/* ANALYTICS TAB */}
+              {activeTab === "analytics" && (
+                <div>
+                  <h3 style={{ fontFamily: "Syne, sans-serif", fontSize: "1.1rem", fontWeight: "600", marginBottom: "1.5rem" }}>
+                    Visitor Analytics
+                  </h3>
+                  
+                  {analyticsData ? (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "2rem" }}>
+                      
+                      {/* Metric Cards Row */}
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1.5rem" }}>
+                        <div style={metricCardStyle}>
+                          <div style={{ fontSize: "0.7rem", color: "var(--muted)", textTransform: "uppercase" }}>Total Page Views</div>
+                          <div style={{ fontSize: "2rem", fontWeight: "800", color: "var(--accent)" }}>{analyticsData.totalViews}</div>
+                        </div>
+                        <div style={metricCardStyle}>
+                          <div style={{ fontSize: "0.7rem", color: "var(--muted)", textTransform: "uppercase" }}>Unique Sources</div>
+                          <div style={{ fontSize: "2rem", fontWeight: "800", color: "var(--accent2)" }}>{Object.keys(analyticsData.referrers || {}).length}</div>
+                        </div>
+                        <div style={metricCardStyle}>
+                          <div style={{ fontSize: "0.7rem", color: "var(--muted)", textTransform: "uppercase" }}>Mobile Visitors</div>
+                          <div style={{ fontSize: "2rem", fontWeight: "800", color: "#4af0c4" }}>
+                            {Math.round(((analyticsData.devices?.Mobile || 0) / (analyticsData.totalViews || 1)) * 100)}%
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Charts and Lists Grid */}
+                      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(320px, 1fr))", gap: "2rem" }}>
+                        
+                        {/* Traffic Over Time (Native SVG Bar Chart) */}
+                        <div style={chartContainerStyle}>
+                          <h4 style={chartTitleStyle}>Daily Activity (Last 7 Days)</h4>
+                          {Object.keys(analyticsData.dailyViews || {}).length === 0 ? (
+                            <div style={noDataStyle}>No recent traffic recorded.</div>
+                          ) : (
+                            <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", height: "150px", paddingTop: "1rem", gap: "0.5rem" }}>
+                              {Object.entries(analyticsData.dailyViews).map(([date, count]) => {
+                                const maxVal = Math.max(...Object.values(analyticsData.dailyViews), 1);
+                                const heightPercent = (count / maxVal) * 100;
+                                const shortDate = date.slice(5); // MM-DD
+                                return (
+                                  <div key={date} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "0.5rem", height: "100%" }}>
+                                    <div style={{ fontSize: "0.65rem", color: "var(--muted)" }}>{count}</div>
+                                    <div style={{
+                                      width: "100%",
+                                      height: `${heightPercent}%`,
+                                      background: "linear-gradient(to top, var(--accent) 0%, rgba(200,241,53,0.3) 100%)",
+                                      borderRadius: "4px 4px 0 0",
+                                      minHeight: count > 0 ? "4px" : "0px",
+                                      transition: "height 0.5s ease"
+                                    }} />
+                                    <div style={{ fontSize: "0.65rem", color: "var(--muted)", whiteSpace: "nowrap" }}>{shortDate}</div>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Page Views Distribution */}
+                        <div style={chartContainerStyle}>
+                          <h4 style={chartTitleStyle}>Views by Page</h4>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                            {Object.entries(analyticsData.pageViews || {}).map(([page, count]) => {
+                              const maxVal = Math.max(...Object.values(analyticsData.pageViews), 1);
+                              const widthPercent = (count / maxVal) * 100;
+                              return (
+                                <div key={page} style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+                                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem" }}>
+                                    <span style={{ color: "var(--text)" }}>{page}</span>
+                                    <span style={{ color: "var(--muted)" }}>{count} views</span>
+                                  </div>
+                                  <div style={{ width: "100%", height: "6px", background: "rgba(255,255,255,0.05)", borderRadius: "3px" }}>
+                                    <div style={{ width: `${widthPercent}%`, height: "100%", background: "var(--accent2)", borderRadius: "3px", transition: "width 0.5s ease" }} />
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+
+                        {/* Devices and Browsers */}
+                        <div style={chartContainerStyle}>
+                          <h4 style={chartTitleStyle}>Device & Browser Breakdown</h4>
+                          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
+                            <div>
+                              <div style={{ fontSize: "0.7rem", color: "var(--muted)", textTransform: "uppercase", marginBottom: "0.5rem" }}>Devices</div>
+                              {Object.entries(analyticsData.devices || {}).map(([device, count]) => (
+                                <div key={device} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", padding: "0.25rem 0" }}>
+                                  <span>{device}</span>
+                                  <span style={{ fontWeight: "600" }}>{count}</span>
+                                </div>
+                              ))}
+                            </div>
+                            <div>
+                              <div style={{ fontSize: "0.7rem", color: "var(--muted)", textTransform: "uppercase", marginBottom: "0.5rem" }}>Browsers</div>
+                              {Object.entries(analyticsData.browsers || {}).map(([browser, count]) => (
+                                <div key={browser} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", padding: "0.25rem 0" }}>
+                                  <span>{browser}</span>
+                                  <span style={{ fontWeight: "600" }}>{count}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Top Referrers */}
+                        <div style={chartContainerStyle}>
+                          <h4 style={chartTitleStyle}>Traffic Sources</h4>
+                          <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                            {Object.entries(analyticsData.referrers || {}).slice(0, 5).map(([ref, count]) => (
+                              <div key={ref} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.75rem", borderBottom: "1px solid rgba(255,255,255,0.02)", paddingBottom: "0.4rem" }}>
+                                <span style={{ color: "var(--text)", textOverflow: "ellipsis", overflow: "hidden", whiteSpace: "nowrap", maxWidth: "180px" }} title={ref}>{ref}</span>
+                                <span style={{ color: "var(--accent)" }}>{count} views</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                      </div>
+                    </div>
+                  ) : (
+                    <div style={noDataStyle}>Failed to load analytics data.</div>
+                  )}
+                </div>
+              )}
+
               {/* MESSAGES TAB */}
               {activeTab === "messages" && (
                 <div>
@@ -952,4 +1102,42 @@ const inputStyle = {
   fontSize: "0.8rem",
   outline: "none",
   marginTop: "0.25rem"
+};
+
+const metricCardStyle = {
+  background: "rgba(255,255,255,0.02)",
+  border: "1px solid var(--border)",
+  padding: "1.5rem",
+  borderRadius: "12px",
+  display: "flex",
+  flexDirection: "column",
+  gap: "0.5rem"
+};
+
+const chartContainerStyle = {
+  background: "rgba(255,255,255,0.01)",
+  border: "1px solid var(--border)",
+  padding: "1.5rem",
+  borderRadius: "12px",
+  display: "flex",
+  flexDirection: "column",
+  gap: "1rem"
+};
+
+const chartTitleStyle = {
+  margin: 0,
+  fontSize: "0.75rem",
+  fontWeight: "600",
+  textTransform: "uppercase",
+  letterSpacing: "0.05em",
+  color: "var(--muted)"
+};
+
+const noDataStyle = {
+  border: "1px dashed var(--border)",
+  borderRadius: "8px",
+  padding: "2rem",
+  textAlign: "center",
+  color: "var(--muted)",
+  fontSize: "0.8rem"
 };

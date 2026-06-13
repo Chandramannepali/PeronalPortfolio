@@ -2,6 +2,7 @@ package com.portfolio.controller;
 
 import com.portfolio.model.*;
 import com.portfolio.repository.*;
+import com.portfolio.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,10 +12,10 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = "http://localhost:5175")
 public class PortfolioController {
 
-    private static final String ADMIN_TOKEN = "admin123";
+    @Autowired
+    private AuthService authService;
 
     @Autowired
     private ProfileRepository profileRepository;
@@ -40,9 +41,21 @@ public class PortfolioController {
     @Autowired
     private ContactMessageRepository contactMessageRepository;
 
-    private boolean verifyAdminToken(String token) {
-        return ADMIN_TOKEN.equals(token);
+    @PostMapping("/admin/login")
+    public ResponseEntity<Map<String, String>> login(@RequestBody Map<String, String> credentials) {
+        String passcode = credentials.get("passcode");
+        String token = authService.login(passcode);
+        if (token != null) {
+            return ResponseEntity.ok(Map.of("token", token));
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(Map.of("message", "Invalid Admin Passcode."));
     }
+
+    private boolean verifyAdminToken(String token) {
+        return authService.verifyToken(token);
+    }
+
 
     /**
      * GET /api/profile - Returns full portfolio information from JPA database.

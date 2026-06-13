@@ -11,6 +11,7 @@ export default function Projects() {
   const [ref, inView] = useInView(0.05);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [openDemo, setOpenDemo] = useState({});
+  const [imageErrors, setImageErrors] = useState({});
 
   const nextSlide = () => {
     setCurrentSlide((prev) => (prev + 1) % projectsData.length);
@@ -94,20 +95,75 @@ export default function Projects() {
                           
                           {/* Left side: Project Image */}
                           <div className="project-image-side">
-                            <img 
-                              src={p.image} 
-                              alt={p.title} 
-                              className="project-image"
-                              onError={(e) => {
-                                e.target.style.display = 'none';
-                              }}
-                              style={{
+                            {!imageErrors[p.number] ? (
+                              <img 
+                                src={p.image} 
+                                alt={p.title} 
+                                className="project-image"
+                                onError={() => {
+                                  setImageErrors(prev => ({ ...prev, [p.number]: true }));
+                                }}
+                                style={{
+                                  width: "100%",
+                                  height: "100%",
+                                  objectFit: "cover",
+                                  transition: "transform 0.5s ease",
+                                }}
+                              />
+                            ) : (
+                              <div className="project-image-placeholder" style={{
                                 width: "100%",
                                 height: "100%",
-                                objectFit: "cover",
-                                transition: "transform 0.5s ease",
-                              }}
-                            />
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                background: "linear-gradient(135deg, rgba(200,241,53,0.15) 0%, rgba(6,6,9,0.95) 100%)",
+                                borderRight: "1px solid var(--border)",
+                                padding: "1.5rem",
+                                textAlign: "center",
+                                position: "relative",
+                                overflow: "hidden"
+                              }}>
+                                <motion.div 
+                                  style={{
+                                    position: "absolute",
+                                    inset: 0,
+                                    background: "radial-gradient(circle at center, rgba(200,241,53,0.1) 0%, transparent 70%)",
+                                  }}
+                                  animate={{
+                                    scale: [1, 1.2, 1],
+                                    opacity: [0.4, 0.8, 0.4]
+                                  }}
+                                  transition={{
+                                    duration: 4,
+                                    repeat: Infinity,
+                                    ease: "easeInOut"
+                                  }}
+                                />
+                                <div style={{
+                                  fontSize: "2.5rem",
+                                  fontWeight: "800",
+                                  fontFamily: "Syne, sans-serif",
+                                  color: "var(--accent)",
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.15em",
+                                  zIndex: 1
+                                }}>
+                                  {p.title ? p.title.split(" ").map(w => w[0]).join("").slice(0, 3) : "PROJ"}
+                                </div>
+                                <div style={{
+                                  fontSize: "0.65rem",
+                                  color: "var(--muted)",
+                                  marginTop: "0.5rem",
+                                  textTransform: "uppercase",
+                                  letterSpacing: "0.05em",
+                                  zIndex: 1
+                                }}>
+                                  Simulator Ready
+                                </div>
+                              </div>
+                            )}
                             <div className="project-image-overlay" />
                           </div>
 
