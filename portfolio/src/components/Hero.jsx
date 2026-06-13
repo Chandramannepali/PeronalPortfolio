@@ -108,22 +108,6 @@ export default function Hero() {
         boxSizing: "border-box"
       }}
     >
-      {/* Background Video (High Quality GPU accelerated) */}
-      <video 
-        ref={bgVideoRef}
-        src="/assets/name_chandra_role_AI_full_s.mp4" 
-        autoPlay
-        loop
-        muted={isMuted}
-        playsInline
-        webkit-playsinline="true"
-        preload="auto"
-        className="hero-video"
-        style={{
-          display: bgVideoPlayFailed ? "none" : "block"
-        }}
-        onError={() => setBgVideoPlayFailed(true)}
-      />
       {/* Lighter overlay for readability while keeping the background video bright and premium */}
       <div 
         style={{
@@ -198,6 +182,23 @@ export default function Hero() {
             </motion.span>
           </motion.h1>
 
+          {/* Background Video (High Quality GPU accelerated) */}
+          <video 
+            ref={bgVideoRef}
+            src="/assets/name_chandra_role_AI_full_s.mp4" 
+            autoPlay
+            loop
+            muted={isMuted}
+            playsInline
+            webkit-playsinline="true"
+            preload="auto"
+            className="hero-video"
+            style={{
+              display: bgVideoPlayFailed ? "none" : "block"
+            }}
+            onError={() => setBgVideoPlayFailed(true)}
+          />
+
           <motion.div className="hero-cta" variants={itemVariants} style={{ justifyContent: "flex-start", marginTop: "0.5rem" }}>
             <MagneticButton href="#projects" className="btn btn-primary btn-glow">
               View Projects
@@ -257,13 +258,7 @@ export default function Hero() {
       </div>
 
       {/* Absolute Bottom Infinite Skills Bar */}
-      <div style={{
-        position: "absolute",
-        bottom: 0,
-        left: 0,
-        width: "100%",
-        zIndex: 3
-      }}>
+      <div className="hero-marquee-container">
         <Marquee />
       </div>
     </section>
