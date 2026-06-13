@@ -118,22 +118,9 @@ export default function Hero() {
         playsInline
         webkit-playsinline="true"
         preload="auto"
+        className="hero-video"
         style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          width: "100%",
-          height: "100%",
-          objectFit: "cover",
-          objectPosition: "70% top", // Aligns video to top to prevent head cut-off
-          zIndex: 0,
-          pointerEvents: "none",
-          display: bgVideoPlayFailed ? "none" : "block",
-          transform: "translate3d(0, 0, 0)",
-          willChange: "transform",
-          backfaceVisibility: "hidden",
-          imageRendering: "auto",
-          opacity: 0.7
+          display: bgVideoPlayFailed ? "none" : "block"
         }}
         onError={() => setBgVideoPlayFailed(true)}
       />
