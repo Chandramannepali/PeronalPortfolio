@@ -1142,7 +1142,7 @@ section { padding: 6rem 4rem; }
   bottom: 0;
   left: 0;
   width: 100%;
-  z-index: 3;
+  z-index: 10;
 }
 
 @media (max-width: 768px) {
